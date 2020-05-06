@@ -6,11 +6,9 @@ pytestmark = pytest.mark.django_backend
 
 
 class TestLoginView:
-
-    def __init__(self):
-        self.username = "tintin"
-        self.email    = "tintin@gmail.com"
-        self.password = "tintin11"
+    username = "tintin"
+    email    = "tintin@gmail.com"
+    password = "tintin11"
 
 
     def test_if_user_doesnt_exist_returns_409(self):
