@@ -1,4 +1,8 @@
-from .exceptions import PasswordDidntMatched, PasswordPatternMatchError, UsernameAlreadyExistsError
+from .exceptions import (PasswordDidntMatched,
+                        PasswordPatternMatchError, 
+                        UsernameAlreadyExistsError,
+                        EmailAlreadyExistsError
+                        )
 from .status import response_code
 from django.contrib.auth import get_user_model
 
@@ -20,3 +24,8 @@ def validate_password_pattern_match(password):
 def validate_username_existance(username):
     if User.objects.filter(username=username).exists():
         raise UsernameAlreadyExistsError(code=407,msg=response_code[407])
+
+def validate_email_existance(email):
+    if User.objects.filter(email=email).exists():
+        raise EmailAlreadyExistsError(code=408,msg=response_code[408])
+
