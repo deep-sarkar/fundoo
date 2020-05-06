@@ -52,7 +52,7 @@ class Registration(GenericAPIView):
         try:
             validate_email(email)
         except ValidationError:
-            return Response(response_code[404])
+            return Response({'code':404,'msg':response_code[404]})
         try:
             validate_password_match(password,confirm_password)
             validate_password_pattern_match(password)
