@@ -21,7 +21,9 @@ from django.core.exceptions import ValidationError
 from .exceptions import PasswordDidntMatched
 #regular expression
 import re
-from .validate import validate_password
+
+#validator
+from .validate import validate_password_match
 
 #User model
 User = get_user_model()
@@ -44,7 +46,7 @@ class Registration(GenericAPIView):
         except ValidationError:
             return Response(response_code[404])
         try:
-           validate_password(password,confirm_password)
+           validate_password_match(password,confirm_password)
         except PasswordDidntMatched as e:
             return Response({"code":e.code,"msg":e.msg})
         if User.objects.filter(username=username).count() != 0:
