@@ -4,24 +4,24 @@ from rest_framework.response import Response
 
 #import from django
 from django.contrib.auth import get_user_model
-from django.core.validators import EmailValidator
+from django.core.validators import validate_email
 
 
 #import from status
-from .status import (CREATED, 
-            USERNAME_ALREADY_EXISTS,
-             EMAIL_ID_ALREAADY_EXISTS,
-              PASSWORD_DIDNT_MATCHED,
-              VALIDATION_ERROR
-              )
+from .status import response_code
 
 #import from serializers
 from .serializers import RegistrationSerializer
 
+#token
 from .jwt_token import generate_token
 
 #errors
 from django.core.exceptions import ValidationError
+from .exceptions import PasswordDidntMatched
+#regular expression
+import re
+from .validate import validate_password
 
 #User model
 User = get_user_model()
@@ -33,24 +33,24 @@ class Registration(GenericAPIView):
     
 
     def post(self, request, *args, **kwargs):
-        first_name    = request.data.get('first_name')
-        last_name     = request.data.get('last_name')
-        username      = request.data.get('username')
-        email         = request.data.get('email')
-        password      = request.data.get('password')
-        password2     = request.data.get('confirm_password')
+        first_name           = request.data.get('first_name')
+        last_name            = request.data.get('last_name')
+        username             = request.data.get('username')
+        email                = request.data.get('email')
+        password             = request.data.get('password')
+        confirm_password     = request.data.get('confirm_password')
         try:
-            EmailValidator(email)
+            validate_email(email)
         except ValidationError:
-            return Response(ValidationError)
-        if password != password2:
-            return Response(PASSWORD_DIDNT_MATCHED)
-        queryset      = User.objects.filter(username=username)
-        if queryset.count() != 0:
-            return Response(USERNAME_ALREADY_EXISTS)
-        queryset      = User.objects.filter(email=email)
-        if queryset.count() != 0:
-            return Response(EMAIL_ID_ALREAADY_EXISTS)
+            return Response(response_code[404])
+        try:
+           validate_password(password,confirm_password)
+        except PasswordDidntMatched as e:
+            return Response({"code":e.code,"msg":e.msg})
+        if User.objects.filter(username=username).count() != 0:
+            return Response(response_code[401])
+        if User.objects.filter(email=email).count() != 0:
+            return Response(response_code[402])
         user_obj = User.objects.create(first_name=first_name,
                                        last_name=last_name,
                                        username=username,
@@ -64,7 +64,7 @@ class Registration(GenericAPIView):
             'password':password
         }
         token = generate_token(payload)
-        return Response(token)
+        return Response(response_code[201])
 
 
         
