@@ -21,11 +21,11 @@ def validate_password_pattern_match(password):
     if not re.search('^[a-zA-Z0-9]{8,}$',password):
         raise PasswordPatternMatchError(code=406,msg=response_code[406])
 
-def validate_username_existance(username):
+def validate_duplicat_username_existance(username):
     if User.objects.filter(username=username).exists():
         raise UsernameAlreadyExistsError(code=407,msg=response_code[407])
 
-def validate_email_existance(email):
+def validate_duplicate_email_existance(email):
     if User.objects.filter(email=email).exists():
         raise EmailAlreadyExistsError(code=408,msg=response_code[408])
 
