@@ -1,7 +1,8 @@
 from .exceptions import (PasswordDidntMatched,
                         PasswordPatternMatchError, 
                         UsernameAlreadyExistsError,
-                        EmailAlreadyExistsError
+                        EmailAlreadyExistsError,
+                        UsernameDoesNotExistsError,
                         )
 from .status import response_code
 from django.contrib.auth import get_user_model
@@ -29,3 +30,7 @@ def validate_duplicate_email_existance(email):
     if User.objects.filter(email=email).exists():
         raise EmailAlreadyExistsError(code=408,msg=response_code[408])
 
+def validate_user_does_not_exists(username):
+    if not User.objects.filter(username=username).exists():
+        raise UsernameDoesNotExistsError(code=409,msg=response_code[409])
+        
