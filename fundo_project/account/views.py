@@ -21,6 +21,7 @@ from django.core.exceptions import ValidationError
 from .exceptions import (PasswordDidntMatched, 
                         PasswordPatternMatchError,
                         UsernameAlreadyExistsError,
+                        EmailAlreadyExistsError,
                         )
 #regular expression
 import re
@@ -29,6 +30,7 @@ import re
 from .validate import (validate_password_match,
                        validate_password_pattern_match,
                        validate_username_existance,
+                       validate_email_existance,
                       )   
 
 #User model
@@ -62,8 +64,10 @@ class Registration(GenericAPIView):
             validate_username_existance(username)
         except UsernameAlreadyExistsError as e:
             return Response({"code":e.code,"msg":e.msg})
-        if User.objects.filter(email=email).count() != 0:
-            return Response(response_code[402])
+        try:
+            validate_email_existance(email)
+        except EmailAlreadyExistsError as e:
+            return Response({"code":e.code,"msg":e.msg})
         user_obj = User.objects.create(first_name=first_name,
                                        last_name=last_name,
                                        username=username,
