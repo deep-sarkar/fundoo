@@ -1,13 +1,8 @@
 from django.test import RequestFactory
-from mixer.backend.django import mixer
 from .. import views
 import pytest
-from django.urls import reverse
-from account.exceptions import PasswordDidntMatched
-# from django.core.exceptions import ValidationError
-from .. validate import validate_password
+
 from .. status import response_code
-from django.shortcuts import Http404
 
 pytestmark = pytest.mark.django_db
 
@@ -34,8 +29,8 @@ class TestRegistrationView:
             'last_name':'tintin',
             'username':'tintin',
             'email':'tintin@gmail.com',
-            'password':'tintin',
-            'confirm_password':'tintin',
+            'password':'tin1##1',
+            'confirm_password':'tin1##1'
         }
         req = RequestFactory().post('/',data)
         resp = views.Registration.as_view()(req) 
