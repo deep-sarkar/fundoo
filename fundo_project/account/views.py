@@ -3,7 +3,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
 #import from django
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, login
 from django.core.validators import validate_email
 
 
@@ -11,7 +11,7 @@ from django.core.validators import validate_email
 from .status import response_code
 
 #import from serializers
-from .serializers import RegistrationSerializer
+from .serializers import RegistrationSerializer, LoginSerializer
 
 #token
 from .jwt_token import generate_token
@@ -22,6 +22,7 @@ from .exceptions import (PasswordDidntMatched,
                         PasswordPatternMatchError,
                         UsernameAlreadyExistsError,
                         EmailAlreadyExistsError,
+                        UsernameDoesNotExistsError,
                         )
 #regular expression
 import re
@@ -31,6 +32,7 @@ from .validate import (validate_password_match,
                        validate_password_pattern_match,
                        validate_duplicat_username_existance,
                        validate_duplicate_email_existance,
+                       validate_user_does_not_exists,
                       )   
 
 #User model
@@ -83,7 +85,21 @@ class Registration(GenericAPIView):
         token = generate_token(payload)
         return Response(token)
 
+class LoginAPIView(GenericAPIView):
+    serializer_class = LoginSerializer
 
-        
+    def post(self, request, *args, **kwargs):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        try:
+            validate_user_does_not_exists(username)
+        except UsernameDoesNotExistsError as e:
+            return Response({'code':e.code,'msg':e.msg})
+        user_obj = User.objects.get(username=username).first()
+        user_obj.check_password(password)
+        if user_obj.is_active:
+            login(request,user_obj)
+        return Response({201,response_code[201]})
 
-        
+            
+
