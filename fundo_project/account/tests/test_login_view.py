@@ -7,7 +7,7 @@ pytestmark = pytest.mark.django_backend
 
 class TestLoginView:
 
-    def __init__(self,username,password):
+    def __init__(self):
         self.username = "tintin"
         self.email    = "tintin@gmail.com"
         self.password = "tintin11"
