@@ -18,12 +18,12 @@ from .jwt_token import generate_token
 
 #errors
 from django.core.exceptions import ValidationError
-from .exceptions import PasswordDidntMatched
+from .exceptions import PasswordDidntMatched, PasswordPatternMatchError
 #regular expression
 import re
 
 #validator
-from .validate import validate_password_match
+from .validate import validate_password_match,validate_password_pattern_match
 
 #User model
 User = get_user_model()
@@ -46,8 +46,11 @@ class Registration(GenericAPIView):
         except ValidationError:
             return Response(response_code[404])
         try:
-           validate_password_match(password,confirm_password)
+            validate_password_match(password,confirm_password)
+            validate_password_pattern_match(password)
         except PasswordDidntMatched as e:
+            return Response({"code":e.code,"msg":e.msg})
+        except PasswordPatternMatchError as e:
             return Response({"code":e.code,"msg":e.msg})
         if User.objects.filter(username=username).count() != 0:
             return Response(response_code[401])
