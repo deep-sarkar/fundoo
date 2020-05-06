@@ -22,3 +22,13 @@ class RegistrationSerializer(serializers.ModelSerializer):
             ]
         extra_kwargs = {'password':{'write_only':True}}
         required_fields = ['username','email','password','confirm_password']
+
+class LoginSerializer(serializers.ModelSerializer):
+    class Meta:
+        model  = User
+        fields = [
+            'username',
+            'password',
+        ]
+        extra_kwargs = {'password':{'write_only':True}}
+        required_fields = fields
