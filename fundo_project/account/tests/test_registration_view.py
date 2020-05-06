@@ -86,4 +86,15 @@ class TestRegistrationView:
         resp = views.Registration.as_view()(req) 
         assert resp.data['code'] == 408
 
-    
+    def test_if_email_is_invalid_returns_404(self):
+        data = {
+            'first_name':'tintin',
+            'last_name':'tintin',
+            'username':'tintin',
+            'email':'tintin',
+            'password':'tin1##1',
+            'confirm_password':'tin1##1'
+        }
+        req = RequestFactory().post('/',data)
+        resp = views.Registration.as_view()(req) 
+        assert resp.data['code'] == 404
