@@ -35,5 +35,30 @@ class TestRegistrationView:
         req = RequestFactory().post('/',data)
         resp = views.Registration.as_view()(req) 
         assert resp.data['code'] == 406
+    
+    def test_on_existing_of_given_username_returns_407(self):
+        data1 = {
+            'first_name':'tintin',
+            'last_name':'tintin',
+            'username':'deep',
+            'email':'tintin@gmail.com',
+            'password':'tintin123',
+            'confirm_password':'tintin123',
+        }
+        req = RequestFactory().post('/',data1)
+        resp = views.Registration.as_view()(req) 
+        assert resp.status_code == 200
+
+        data2 = {
+            'first_name':'tintin',
+            'last_name':'tintin',
+            'username':'deep',
+            'email':'tintin@gmail.com',
+            'password':'tintin123',
+            'confirm_password':'tintin123',
+        }
+        req = RequestFactory().post('/',data2)
+        resp = views.Registration.as_view()(req) 
+        assert resp.data['code'] == 407
 
     
