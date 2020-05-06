@@ -29,8 +29,8 @@ import re
 #validator
 from .validate import (validate_password_match,
                        validate_password_pattern_match,
-                       validate_username_existance,
-                       validate_email_existance,
+                       validate_duplicat_username_existance,
+                       validate_duplicate_email_existance,
                       )   
 
 #User model
@@ -61,11 +61,11 @@ class Registration(GenericAPIView):
         except PasswordPatternMatchError as e:
             return Response({"code":e.code,"msg":e.msg})
         try:
-            validate_username_existance(username)
+            validate_duplicat_username_existance(username)
         except UsernameAlreadyExistsError as e:
             return Response({"code":e.code,"msg":e.msg})
         try:
-            validate_email_existance(email)
+            validate_duplicate_email_existance(email)
         except EmailAlreadyExistsError as e:
             return Response({"code":e.code,"msg":e.msg})
         user_obj = User.objects.create(first_name=first_name,
