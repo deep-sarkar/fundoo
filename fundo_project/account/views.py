@@ -107,7 +107,9 @@ class LoginAPIView(GenericAPIView):
         if user_obj.check_password(password):
             if user_obj.is_active:
                 login(request,user_obj)
-        return Response({'code':200,'msg':response_code[200]})
+                return Response({'code':200,'msg':response_code[200]})
+            return Response({'code':411,'msg':response_code[411]})
+        return Response({'code':412,'msg':response_code[412]})
 
             
 
