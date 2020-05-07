@@ -93,13 +93,16 @@ class LoginAPIView(GenericAPIView):
         password = request.data.get('password')
         try:
             validate_user_does_not_exists(username)
+            validate_password_pattern_match(password)
         except UsernameDoesNotExistsError as e:
             return Response({'code':e.code,'msg':e.msg})
+        except PasswordPatternMatchError as e :
+            return Response({'code':e.code,'msg':e.msg})
         user_obj = User.objects.get(username=username).first()
-        user_obj.check_password(password)
-        if user_obj.is_active:
-            login(request,user_obj)
-        return Response({201,response_code[201]})
+        if user_obj.check_password(password):
+            if user_obj.is_active:
+                login(request,user_obj)
+        return Response({200,response_code[200]})
 
             
 
