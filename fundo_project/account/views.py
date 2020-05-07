@@ -98,11 +98,12 @@ class LoginAPIView(GenericAPIView):
             return Response({'code':e.code,'msg':e.msg})
         except PasswordPatternMatchError as e :
             return Response({'code':e.code,'msg':e.msg})
-        user_obj = User.objects.get(username=username).first()
+        queryset = User.objects.filter(username=username)
+        user_obj = queryset.first()
         if user_obj.check_password(password):
             if user_obj.is_active:
                 login(request,user_obj)
-        return Response({200,response_code[200]})
+        return Response({'code':200,'msg':response_code[200]})
 
             
 
