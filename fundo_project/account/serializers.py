@@ -24,6 +24,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         required_fields = ['username','email','password','confirm_password']
 
 class LoginSerializer(serializers.ModelSerializer):
+    password        = serializers.CharField(style={'input_type': 'password'}, write_only=True)
     class Meta:
         model  = User
         fields = [
