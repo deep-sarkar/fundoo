@@ -12,4 +12,6 @@ response_code = {
     408 : "EMAIL_ALREADY_EXISTS",
     409 : "USER_DOES_NOT_EXISTS",
     410 : "LOGOUT_FIRST",
+    411 : "VERIFY_EMAIL_FIRST",
+    412 : "WRONG_PASSWORD",
 }
