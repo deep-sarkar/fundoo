@@ -3,7 +3,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
 #import from django
-from django.contrib.auth import get_user_model, login, logout
+from django.contrib.auth import get_user_model, login, logout, authenticate
 from django.core.validators import validate_email
 
 
@@ -72,13 +72,13 @@ class Registration(GenericAPIView):
             validate_duplicate_email_existance(email)
         except EmailAlreadyExistsError as e:
             return Response({"code":e.code,"msg":e.msg})
-        user_obj = User.objects.create(first_name=first_name,
+        user_obj = User.objects.create_user(first_name=first_name,
                                        last_name=last_name,
                                        username=username,
-                                       email=email 
+                                       email=email ,
+                                       password=password
                                         )
         user_obj.is_active = False
-        user_obj.set_password(password)
         user_obj.save()
         payload = {
             'username':username,
@@ -86,6 +86,8 @@ class Registration(GenericAPIView):
         }
         token = generate_token(payload)
         return Response(token)
+
+
 
 class LoginAPIView(GenericAPIView):
     serializer_class = LoginSerializer
@@ -102,9 +104,8 @@ class LoginAPIView(GenericAPIView):
             return Response({'code':e.code,'msg':e.msg})
         except PasswordPatternMatchError as e :
             return Response({'code':e.code,'msg':e.msg})
-        queryset = User.objects.filter(username=username)
-        user_obj = queryset.first()
-        if user_obj.check_password(password):
+        user_obj = authenticate(request, username=username, password=password)
+        if user_obj is not None :
             if user_obj.is_active:
                 login(request,user_obj)
                 return Response({'code':200,'msg':response_code[200]})
