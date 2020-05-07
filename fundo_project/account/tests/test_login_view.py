@@ -33,6 +33,18 @@ class TestLoginView:
         request   = RequestFactory().post('/',detail)
         response  = views.LoginAPIView.as_view()(request)
         assert response.data['code'] == 406
-
+    
+    def test_authentication_validated_detail_returns_200(self):
+        user = User.objects.create(first_name ='tintin', last_name='tintin', username='tintin',
+                                    email='tintin@gmail.com')
+        user.is_active = True
+        user.set_password("12345678")
+        detail = {
+            "username":"tintin",
+            "password":"12345678"
+            }   
+        request   = RequestFactory().post('/',detail)
+        response  = views.LoginAPIView.as_view()(request)
+        assert response.data['code'] == 200
 
 
