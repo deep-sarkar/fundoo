@@ -45,6 +45,8 @@ class Registration(GenericAPIView):
     
 
     def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return Response({'code':410,'msg':response_code[410]})
         first_name           = request.data.get('first_name')
         last_name            = request.data.get('last_name')
         username             = request.data.get('username')
@@ -89,6 +91,8 @@ class LoginAPIView(GenericAPIView):
     serializer_class = LoginSerializer
 
     def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return Response({'code':410,'msg':response_code[410]})
         username = request.data.get('username')
         password = request.data.get('password')
         try:
