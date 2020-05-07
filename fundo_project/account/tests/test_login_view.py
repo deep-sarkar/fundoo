@@ -34,7 +34,7 @@ class TestLoginView:
         response  = views.LoginAPIView.as_view()(request)
         assert response.data['code'] == 406
     
-    def test_authentication_invalidated_password_returns_200(self):
+    def test_authentication_invalidated_password_returns_412(self):
         user = User.objects.create(first_name ='tintin', last_name='tintin', username='tintin',
                                     email='tintin@gmail.com')
         user.is_active = True
@@ -46,5 +46,4 @@ class TestLoginView:
         request   = RequestFactory().post('/account/login/',detail)
         response  = views.LoginAPIView.as_view()(request)
         assert response.data['code'] == 412
-
 
