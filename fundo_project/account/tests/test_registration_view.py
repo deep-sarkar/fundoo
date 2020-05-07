@@ -9,7 +9,7 @@ pytestmark = pytest.mark.django_db
 
 class TestRegistrationView:
 
-
+    
     def test_given_password_match_didnt_match_returns_403(self):
         data = {
             'first_name':'tintin',
