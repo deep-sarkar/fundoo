@@ -14,4 +14,5 @@ response_code = {
     410 : "LOGOUT_FIRST",
     411 : "VERIFY_EMAIL_FIRST",
     412 : "WRONG_PASSWORD",
+    413 : "LOGIN_FIRST",
 }
