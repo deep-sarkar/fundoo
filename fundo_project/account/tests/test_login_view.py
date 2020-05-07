@@ -21,5 +21,18 @@ class TestLoginView:
         request   = RequestFactory().post('/',detail)
         response  = views.LoginAPIView.as_view()(request)
         assert response.data['code'] == 409
+    
+    def test_authentication_without_password_returns_406(self):
+        user = User.objects.create(first_name ='tintin', last_name='tintin', username='tintin',
+                                    email='tintin@gmail.com')
+        user.set_password('password')
+        detail = {
+            'username':'tintin',
+            'password':''
+        }
+        request   = RequestFactory().post('/',detail)
+        response  = views.LoginAPIView.as_view()(request)
+        assert response.data['code'] == 406
+
 
 
