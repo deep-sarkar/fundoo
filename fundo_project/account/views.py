@@ -3,7 +3,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
 #import from django
-from django.contrib.auth import get_user_model, login
+from django.contrib.auth import get_user_model, login, logout
 from django.core.validators import validate_email
 
 
@@ -111,5 +111,12 @@ class LoginAPIView(GenericAPIView):
             return Response({'code':411,'msg':response_code[411]})
         return Response({'code':412,'msg':response_code[412]})
 
-            
+class Logout(GenericAPIView):
+    serializer_class = LoginSerializer
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            logout(request)
+            return Response({'code':200,'msg':response_code[200]})
+        return Response({'code':413,'msg':response_code[413]})
 
