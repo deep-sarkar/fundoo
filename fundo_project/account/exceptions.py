@@ -1,24 +1,20 @@
-class UsernameAlreadyExistsError(Exception):
+class MyBaseException(Exception):
     def __init__(self,msg,code):
         self.code = code
         self.msg = msg
 
-class EmailAlreadyExistsError(Exception):
-    def __init__(self,msg,code):
-        self.code = code
-        self.msg = msg
 
-class PasswordDidntMatched(Exception):
-    def __init__(self,msg,code):
-        self.code = code
-        self.msg = msg
+class UsernameAlreadyExistsError(MyBaseException):
+    pass
+        
+class EmailAlreadyExistsError(MyBaseException):
+    pass
 
-class PasswordPatternMatchError(Exception):
-    def __init__(self,msg,code):
-        self.code = code
-        self.msg = msg
+class PasswordDidntMatched(MyBaseException):
+    pass
 
-class UsernameDoesNotExistsError(Exception):
-    def __init__(self,msg,code):
-        self.code = code
-        self.msg = msg
+class PasswordPatternMatchError(MyBaseException):
+    pass
+
+class UsernameDoesNotExistsError(MyBaseException):
+    pass
