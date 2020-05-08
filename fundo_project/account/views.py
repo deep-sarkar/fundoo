@@ -47,6 +47,8 @@ from .validate import (validate_password_match,
                        validate_user_does_not_exists,
                       )   
 
+import jwt
+
 #User model
 User = get_user_model()
 
@@ -172,4 +174,26 @@ class ResetPasswordView(GenericAPIView):
         user.save()
         return Response({'code':200, 'msg':response_code[200]})
         
-        
+class ActivateAccount(GenericAPIView):
+    serializer_class = LoginSerializer
+
+    def get(self, request, surl):
+        token_obj = ShortURL.objects.get(surl=surl)
+        token     = token_obj.lurl
+        try:
+            decode    = jwt.decode(token, 'SECRET_KEY')
+        except jwt.DecodeError:
+            return Response({'code':304,'msg':response_code[304]})
+        username  = decode['username']
+        try:
+            validate_user_does_not_exists(username)
+        except UsernameDoesNotExistsError as e:
+            return Response({'code':e.code, 'msg':e.msg})
+        user = User.objects.get(username=username)
+        if user.is_active:
+            return Response({'code':302, 'msg':response_code[302]})
+        else:
+            user.is_active = True
+            user.save()
+            return Response({'code':200,'msg':response_code[200]})
+
