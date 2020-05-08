@@ -7,7 +7,6 @@ pytestmark = pytest.mark.django_db
 
 User = get_user_model()
 
-@pytest.mark.django_db
 class TestLoginView:
 
     @pytest.fixture
@@ -41,6 +40,3 @@ class TestLoginView:
         request   = RequestFactory().post('/',detail)
         response  = views.LoginAPIView.as_view()(request)
         assert response.data['code'] == 412
-        
-
-
