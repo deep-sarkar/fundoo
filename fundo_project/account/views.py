@@ -103,7 +103,7 @@ class Registration(GenericAPIView):
         domain      = curren_site.domain
         subject     = "Account activation url"
         msg = render_to_string(
-                'accounts/account_activation.html',
+                'account/account_activation.html',
                 {
                     'username': username, 
                     'domain': domain,
