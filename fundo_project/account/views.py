@@ -11,7 +11,7 @@ from django.core.validators import validate_email
 from .status import response_code
 
 #import from serializers
-from .serializers import RegistrationSerializer, LoginSerializer
+from .serializers import RegistrationSerializer, LoginSerializer, ResetPasswordSerializer
 
 #token
 from .jwt_token import generate_token
@@ -121,3 +121,26 @@ class Logout(GenericAPIView):
             return Response({'code':200,'msg':response_code[200]})
         return Response({'code':413,'msg':response_code[413]})
 
+class ResetPasswordView(GenericAPIView):
+    serializer_class = ResetPasswordSerializer
+
+    def post(self, request, *args, **kwargs):
+        username         = self.request.user.username
+        password         = request.data.get('password')
+        confirm_password = request.data.get('confirm_password')
+        try:
+            validate_password_pattern_match(password)
+            validate_password_match(password,confirm_password)
+            validate_user_does_not_exists(username)
+        except PasswordDidntMatched as e:
+            return Response({"code":e.code,"msg":e.msg})
+        except PasswordPatternMatchError as e:
+            return Response({"code":e.code,"msg":e.msg})
+        except UsernameDoesNotExistsError as e:
+            return Response({'code':e.code,'msg':e.msg})
+        user = User.objects.get(username=username)
+        user.set_password(password)
+        user.save()
+        return Response({'code':200, 'msg':response_code[200]})
+        
+        
