@@ -5,6 +5,16 @@ from rest_framework.response import Response
 #import from django
 from django.contrib.auth import get_user_model, login, logout, authenticate
 from django.core.validators import validate_email
+from django.template.loader import render_to_string
+
+#Short url
+from django_short_url.views import get_surl
+from django_short_url.models import ShortURL
+
+#mailing
+from django.core.mail import send_mail
+from django.contrib.sites.shortcuts import get_current_site
+from fundo_project.settings import EMAIL_HOST_USER
 
 
 #import from status
@@ -24,6 +34,8 @@ from .exceptions import (PasswordDidntMatched,
                         EmailAlreadyExistsError,
                         UsernameDoesNotExistsError,
                         )
+from smtplib import SMTPException
+
 #regular expression
 import re
 
@@ -84,8 +96,25 @@ class Registration(GenericAPIView):
             'username':username,
             'password':password
         }
-        token = generate_token(payload)
-        return Response(token)
+        token       = generate_token(payload)
+        surl        = get_surl(str(token)) 
+        final_url   = surl.split('/')
+        curren_site = get_current_site(request)
+        domain      = curren_site.domain
+        subject     = "Account activation url"
+        msg = render_to_string(
+                'accounts/account_activation.html',
+                {
+                    'username': username, 
+                    'domain': domain,
+                    'surl': final_url[2],
+                })
+        try:
+            send_mail(subject, msg, EMAIL_HOST_USER,
+                        [email], fail_silently=False)
+        except SMTPException:
+            return Response({'code':301,'msg':response_code[301]})
+        return Response({"code":201, "msg":response_code[201]})
 
 
 
