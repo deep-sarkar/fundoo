@@ -3,7 +3,6 @@ class MyBaseException(Exception):
         self.code = code
         self.msg = msg
 
-
 class UsernameAlreadyExistsError(MyBaseException):
     pass
         
