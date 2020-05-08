@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     #installed apps
     'rest_framework',
+    'django_short_url',
 
     #projects
     'account',
