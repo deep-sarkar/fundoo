@@ -33,4 +33,8 @@ def validate_duplicate_email_existance(email):
 def validate_user_does_not_exists(username):
     if not User.objects.filter(username=username).exists():
         raise UsernameDoesNotExistsError(code=409,msg=response_code[409])
+
+def validate_email_does_not_exists(username):
+    if not User.objects.filter(username=username).exists():
+        raise UsernameDoesNotExistsError(code=409,msg=response_code[409])
         
