@@ -21,7 +21,7 @@ from fundo_project.settings import EMAIL_HOST_USER
 from .status import response_code
 
 #import from serializers
-from .serializers import RegistrationSerializer, LoginSerializer, ResetPasswordSerializer
+from .serializers import RegistrationSerializer, LoginSerializer, ResetPasswordSerializer, ForgotPasswordSerializer
 
 #token
 from .jwt_token import generate_token
@@ -33,6 +33,7 @@ from .exceptions import (PasswordDidntMatched,
                         UsernameAlreadyExistsError,
                         EmailAlreadyExistsError,
                         UsernameDoesNotExistsError,
+                        EmailDoesNotExistsError
                         )
 from smtplib import SMTPException
 
@@ -45,6 +46,7 @@ from .validate import (validate_password_match,
                        validate_duplicat_username_existance,
                        validate_duplicate_email_existance,
                        validate_user_does_not_exists,
+                       validate_email_does_not_exists,
                       )   
 
 import jwt
@@ -136,8 +138,9 @@ class LoginAPIView(GenericAPIView):
         except PasswordPatternMatchError as e :
             return Response({'code':e.code,'msg':e.msg})
         user_obj = authenticate(request, username=username, password=password)
-        if user_obj is not None :
-            if user_obj.is_active:
+        user     = User.objects.get(username=username)
+        if user_obj is True :
+            if user.is_active:
                 login(request,user_obj)
                 return Response({'code':200,'msg':response_code[200]})
             return Response({'code':411,'msg':response_code[411]})
@@ -197,3 +200,70 @@ class ActivateAccount(GenericAPIView):
             user.save()
             return Response({'code':200,'msg':response_code[200]})
 
+class ForgotPasswordView(GenericAPIView):
+    serializer_class = ForgotPasswordSerializer
+
+    # def post(self, request):
+    #     email = request.data['email']
+    #     try:
+    #         validate_email(email)
+    #     except ValidationError:
+    #         return Response('enter_valid_email')
+    #     try:
+    #         user = User.objects.filter(email=email)
+    #         username = user.values()[0]['username'] #Fetch username still if user is not logedin
+    #         payload = {
+    #                 'username': username,
+    #                 }
+    #         token = generate_token(payload)
+    #         current_site = get_current_site(request)
+    #         domain_name = current_site.domain
+    #         surl = get_surl(str(token))
+    #         final_url = surl.split("/")
+    #         mail_subject = "Reset Your password by clicking below link"
+    #         msg = render_to_string(
+    #             'account/forgot_password.html',
+    #             {
+    #                 'username': username, 
+    #                 'domain': domain_name,
+    #                 'surl': final_url[2],
+    #                 })
+    #         send_mail(mail_subject, msg, EMAIL_HOST_USER,
+    #                 [email], fail_silently=False)
+    #         return Response('success')
+    #     except SMTPException:
+    #         return Response('Bad request, please try again later.')
+
+    def post(self, request, *args, **kwargs):
+        email = request.data.get('email')
+        try:
+            # validate_email_does_not_exists(email)
+            validate_email(email)
+        # except EmailDoesNotExistsError as e:
+        #     return Response({'code':e.code,'msg':e.msg})
+        except ValidationError:
+            return Response({'code':404,'msg':response_code[404]})
+        user = User.objects.filter(email=email)
+        username = user.values()[0]['username'] #Fetch username still if user is not logedin
+        payload = {
+                'username': username,
+                }
+        token = generate_token(payload)
+        current_site = get_current_site(request)
+        domain_name = current_site.domain
+        surl = get_surl(str(token))
+        final_url = surl.split("/")
+        mail_subject = "Reset Your password by clicking below link"
+        msg = render_to_string(
+            'account/forgot_password.html',
+            {
+                'username': username, 
+                'domain': domain_name,
+                'surl': final_url[2],
+                })
+        try:            
+            send_mail(mail_subject, msg, EMAIL_HOST_USER,
+                    [email], fail_silently=False)
+            return Response({'code':200,'msg':response_code[200]})
+        except SMTPException:
+            return Response({'code':301,'msg':response_code[301]})
