@@ -203,48 +203,14 @@ class ActivateAccount(GenericAPIView):
 class ForgotPasswordView(GenericAPIView):
     serializer_class = ForgotPasswordSerializer
 
-    # def post(self, request):
-    #     email = request.data['email']
-    #     try:
-    #         validate_email(email)
-    #     except ValidationError:
-    #         return Response('enter_valid_email')
-    #     try:
-    #         user = User.objects.filter(email=email)
-    #         username = user.values()[0]['username'] #Fetch username still if user is not logedin
-    #         payload = {
-    #                 'username': username,
-    #                 }
-    #         token = generate_token(payload)
-    #         current_site = get_current_site(request)
-    #         domain_name = current_site.domain
-    #         surl = get_surl(str(token))
-    #         final_url = surl.split("/")
-    #         mail_subject = "Reset Your password by clicking below link"
-    #         msg = render_to_string(
-    #             'account/forgot_password.html',
-    #             {
-    #                 'username': username, 
-    #                 'domain': domain_name,
-    #                 'surl': final_url[2],
-    #                 })
-    #         send_mail(mail_subject, msg, EMAIL_HOST_USER,
-    #                 [email], fail_silently=False)
-    #         return Response('success')
-    #     except SMTPException:
-    #         return Response('Bad request, please try again later.')
-
     def post(self, request, *args, **kwargs):
         email = request.data.get('email')
         try:
-            # validate_email_does_not_exists(email)
             validate_email(email)
-        # except EmailDoesNotExistsError as e:
-        #     return Response({'code':e.code,'msg':e.msg})
         except ValidationError:
             return Response({'code':404,'msg':response_code[404]})
         user = User.objects.filter(email=email)
-        username = user.values()[0]['username'] #Fetch username still if user is not logedin
+        username = user.values()[0]['username'] 
         payload = {
                 'username': username,
                 }
