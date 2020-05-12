@@ -17,3 +17,6 @@ class PasswordPatternMatchError(MyBaseException):
 
 class UsernameDoesNotExistsError(MyBaseException):
     pass
+
+class EmailDoesNotExistsError(MyBaseException):
+    pass
