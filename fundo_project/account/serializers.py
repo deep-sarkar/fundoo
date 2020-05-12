@@ -43,3 +43,8 @@ class ResetPasswordSerializer(serializers.ModelSerializer):
             'password',
             'confirm_password'
         ]
+
+class ForgotPasswordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model  = User
+        fields = ['email']
