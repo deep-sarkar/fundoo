@@ -2,7 +2,7 @@ import pytest
 from .. import views
 from django.test import RequestFactory
 from django.contrib.auth import get_user_model
-
+import mock
 pytestmark = pytest.mark.django_db
 
 User = get_user_model()
@@ -40,3 +40,14 @@ class TestLoginView:
         request   = RequestFactory().post('/',detail)
         response  = views.LoginAPIView.as_view()(request)
         assert response.data['code'] == 412
+    
+    # @mock.patch("account.views.authenticate",mock.MagicMock(return_value=True))
+    # def test_authentication_with_valid_details_returns_200(self, setUp):
+    #     detail = {
+    #         "username":"tintin",
+    #         "password":"tintin123",
+    #         "user": User.objects.get(username='tintin')
+    #         }   
+    #     request   = RequestFactory().post('/',detail)
+    #     response  = views.LoginAPIView.as_view()(request)
+    #     assert response.data['code'] == 200
