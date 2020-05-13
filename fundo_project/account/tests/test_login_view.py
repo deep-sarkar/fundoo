@@ -46,7 +46,6 @@ class TestLoginView:
     #     detail = {
     #         "username":"tintin",
     #         "password":"tintin123",
-    #         "user": User.objects.get(username='tintin')
     #         }   
     #     request   = RequestFactory().post('/',detail)
     #     response  = views.LoginAPIView.as_view()(request)
