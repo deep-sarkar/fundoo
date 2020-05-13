@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from django.contrib.auth import get_user_model, login, logout, authenticate
 from django.core.validators import validate_email
 from django.template.loader import render_to_string
+from django.shortcuts import redirect, HttpResponse
 
 #Short url
 from django_short_url.views import get_surl
@@ -27,7 +28,7 @@ from .serializers import RegistrationSerializer, LoginSerializer, ResetPasswordS
 from .jwt_token import generate_token
 
 #errors
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from .exceptions import (PasswordDidntMatched, 
                         PasswordPatternMatchError,
                         UsernameAlreadyExistsError,
@@ -138,9 +139,8 @@ class LoginAPIView(GenericAPIView):
         except PasswordPatternMatchError as e :
             return Response({'code':e.code,'msg':e.msg})
         user_obj = authenticate(request, username=username, password=password)
-        user     = User.objects.get(username=username)
-        if user_obj is True :
-            if user.is_active:
+        if user_obj is not None:
+            if user_obj.is_active:
                 login(request,user_obj)
                 return Response({'code':200,'msg':response_code[200]})
             return Response({'code':411,'msg':response_code[411]})
@@ -210,7 +210,10 @@ class ForgotPasswordView(GenericAPIView):
         except ValidationError:
             return Response({'code':404,'msg':response_code[404]})
         user = User.objects.filter(email=email)
-        username = user.values()[0]['username'] 
+        try:
+            username = user.values()[0]['username'] 
+        except IndexError:
+            return Response({'code':303,'msg':response_code[303]})
         payload = {
                 'username': username,
                 }
@@ -233,3 +236,34 @@ class ForgotPasswordView(GenericAPIView):
             return Response({'code':200,'msg':response_code[200]})
         except SMTPException:
             return Response({'code':301,'msg':response_code[301]})
+
+
+def reset_new_password(request,surl):
+    token_obj = ShortURL.objects.get(surl=surl)
+    token = token_obj.lurl
+    try:
+        decode = jwt.decode(token,'SECRET_KEY')
+    except jwt.DecodeError:
+        return Response({'code':304,'msg':response_code[304]})
+    username = decode['username']
+    user = User.objects.get(username=username)
+    return redirect('http://127.0.0.1:8000/account/activate_new_password/' + str(user)+'/')
+   
+class ActivateNewPassword(GenericAPIView):
+    serializer_class = ResetPasswordSerializer
+
+    def post(self, request, user_reset):
+        password         = request.data.get('password')
+        confirm_password = request.data.get('confirm_password')
+        try:
+            validate_password_match(password, confirm_password)
+            validate_password_pattern_match(password)
+        except PasswordDidntMatched as e:
+            return Response({"code":e.code,"msg":e.msg})
+        except PasswordPatternMatchError as e:
+            return Response({"code":e.code,"msg":e.msg})
+        user = User.objects.get(username__exact=user_reset)
+        user.set_password(password)
+        user.save()
+        return Response({'code':200,'msg':response_code[200]})
+        
