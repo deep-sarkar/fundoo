@@ -41,6 +41,9 @@ from smtplib import SMTPException
 #regular expression
 import re
 
+#redis
+import redis
+
 #validator
 from .validate import (validate_password_match,
                        validate_password_pattern_match,
@@ -54,6 +57,9 @@ import jwt
 
 #User model
 User = get_user_model()
+
+#redis object
+redis_object = redis.Redis(host='localhost', port=6379,db=0)
 
 
 
@@ -142,6 +148,11 @@ class LoginAPIView(GenericAPIView):
         if user_obj is not None:
             if user_obj.is_active:
                 login(request,user_obj)
+                payload = {
+                    'username':username
+                }
+                token = generate_token(payload)
+                redis_object.set(username,token)
                 return Response({'code':200,'msg':response_code[200]})
             return Response({'code':411,'msg':response_code[411]})
         return Response({'code':412,'msg':response_code[412]})
@@ -151,6 +162,8 @@ class Logout(GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
+            username = request.user.username
+            redis_object.delete(username)
             logout(request)
             return Response({'code':200,'msg':response_code[200]})
         return Response({'code':413,'msg':response_code[413]})
