@@ -41,12 +41,3 @@ class TestLoginView:
         response  = views.LoginAPIView.as_view()(request)
         assert response.data['code'] == 412
     
-    # @mock.patch("account.views.authenticate",mock.MagicMock(return_value=True))
-    # def test_authentication_with_valid_details_returns_200(self, setUp):
-    #     detail = {
-    #         "username":"tintin",
-    #         "password":"tintin123",
-    #         }   
-    #     request   = RequestFactory().post('/',detail)
-    #     response  = views.LoginAPIView.as_view()(request)
-    #     assert response.data['code'] == 200
