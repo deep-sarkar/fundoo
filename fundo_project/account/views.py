@@ -165,8 +165,7 @@ class Logout(GenericAPIView):
             username = request.user.username
             redis_object.delete(username)
             logout(request)
-            return Response({'code':200,'msg':response_code[200]})
-        return Response({'code':413,'msg':response_code[413]})
+        return Response({'code':200,'msg':response_code[200]})
 
 class ResetPasswordView(GenericAPIView):
     serializer_class = ResetPasswordSerializer
