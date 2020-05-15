@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model, login, logout, authenticate
 from django.core.validators import validate_email
 from django.template.loader import render_to_string
 from django.shortcuts import redirect, HttpResponse, render
+from django.views.generic import TemplateView
 
 #Short url
 from django_short_url.views import get_surl
@@ -61,6 +62,9 @@ User = get_user_model()
 #redis object
 redis_object = redis.Redis(host='localhost', port=6379,db=0)
 
+
+class Home(TemplateView):
+    template_name = 'account/home.html'
 
 
 class Registration(GenericAPIView):
