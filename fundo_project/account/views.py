@@ -62,7 +62,7 @@ User = get_user_model()
 #redis object
 redis_object = redis.Redis(host='localhost', port=6379,db=0)
 
-
+#Home
 class Home(TemplateView):
     template_name = 'account/home.html'
 
@@ -160,7 +160,8 @@ class LoginAPIView(GenericAPIView):
                 }
                 token = generate_token(payload)
                 redis_object.set(username,token)
-                return Response({'code':200,'msg':response_code[200]})
+                return redirect('home')
+                # return Response({'code':200,'msg':response_code[200]})
             return Response({'code':411,'msg':response_code[411]})
         return Response({'code':412,'msg':response_code[412]})
 
