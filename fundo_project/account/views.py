@@ -161,10 +161,9 @@ class Logout(GenericAPIView):
     serializer_class = LoginSerializer
 
     def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            username = request.user.username
-            redis_object.delete(username)
-            logout(request)
+        username = request.user.username
+        redis_object.delete(username)
+        logout(request)
         return Response({'code':200,'msg':response_code[200]})
 
 class ResetPasswordView(GenericAPIView):
