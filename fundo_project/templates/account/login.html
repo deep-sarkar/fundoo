@@ -41,13 +41,15 @@
 </head>
 <body>
     <div id="login">
-        <h1>login</h1>
-        <label> Username : </label><input type="text" name="username" id="username" placeholder="username">
-        <br> 
-        <label>Password : </label><input type="password" name="password" id="password" placeholder="password">
-        <br>
-        <button type="submit" id="btn">Login</button>
-        
+        <form action="" method="POST">
+            {% csrf_token %}
+            <h1>login</h1>
+            <label for="username"> Username : </label><input type="text" name="username" id="username" placeholder="username">
+            <br> 
+            <label for="password">Password : </label><input type="password" name="password" id="password" placeholder="password">
+            <br>
+            <button type="submit" id="btn">Login</button>
+    </form>
     </div>
 </body>
 </html>
