@@ -6,10 +6,12 @@ from .views import(Registration,
                     ActivateAccount, 
                     ForgotPasswordView,
                     reset_new_password,
-                    ActivateNewPassword
+                    ActivateNewPassword,
+                    Home
                     ) 
 
 urlpatterns = [
+    path('', Home.as_view() , name='home'),
     path('register/', Registration.as_view(), name='registration'),
     path('login/', LoginAPIView.as_view(), name='login'),
     path('logout/', Logout.as_view(), name='logout'),
