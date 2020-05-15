@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from django.contrib.auth import get_user_model, login, logout, authenticate
 from django.core.validators import validate_email
 from django.template.loader import render_to_string
-from django.shortcuts import redirect, HttpResponse
+from django.shortcuts import redirect, HttpResponse, render
 
 #Short url
 from django_short_url.views import get_surl
@@ -132,6 +132,9 @@ class Registration(GenericAPIView):
 class LoginAPIView(GenericAPIView):
     serializer_class = LoginSerializer
 
+    def get(self, request):
+        return render(request,'account/login.html')
+        
     def post(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return Response({'code':410,'msg':response_code[410]})
