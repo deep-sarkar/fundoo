@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     #installed apps
     'rest_framework',
     'django_short_url',
+    'social_django',
 
     #projects
     'account',
@@ -54,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'fundo_project.urls'
@@ -69,6 +71,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -141,3 +145,17 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'wotbsingh@gmail.com'
 EMAIL_HOST_PASSWORD = '9950618403'
 EMAIL_USE_SSL = False
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.github.GithubOAuth2',
+    # # 'social_core.backends.twitter.TwitterOAuth',
+    'social_core.backends.facebook.FacebookOAuth2',
+
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_GITHUB_KEY = 'cc4f57f60d1b2da83bcb'
+SOCIAL_AUTH_GITHUB_SECRET = '1664d4d5d18c38464f814683d4ffe6ad9cd4d6fe'
+
+SOCIAL_AUTH_FACEBOOK_KEY = '704667983443300'
+SOCIAL_AUTH_FACEBOOK_SECRET = 'be5e680089aeb2e88642abc9d3d950d3'
