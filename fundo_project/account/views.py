@@ -160,7 +160,7 @@ class LoginAPIView(GenericAPIView):
                 }
                 token = generate_token(payload)
                 redis_object.set(username,token)
-                return redirect('home')
+                return redirect('profile')
                 # return Response({'code':200,'msg':response_code[200]})
             return Response({'code':411,'msg':response_code[411]})
         return Response({'code':412,'msg':response_code[412]})
