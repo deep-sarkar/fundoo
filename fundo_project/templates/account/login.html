@@ -7,14 +7,14 @@
     <style>
         body 
         {
-            background-color: dimgrey;
+            background-color: rgb(250, 245, 245);
         }
 
         #login 
         {
             width: 400px;
-            height: 200px;
-            background-color:darkseagreen;
+            height: 300px;
+            background-color:rgb(212, 231, 212);
             margin: auto;
             align-self: center;
             text-align: left;
@@ -30,8 +30,8 @@
         }
         #btn
         {
-            color: dodgerblue;
-            background-color:rgb(245, 215, 215);
+            color: crimson;
+            background-color:rgb(245, 230, 230);
         }
         #btn:hover 
         {
@@ -50,6 +50,10 @@
             <br>
             <button type="submit" id="btn">Login</button>
     </form>
+        <p><strong>-- OR --</strong></p>
+        <a href="{% url 'social:begin' 'facebook' %}">Login with facebook</a><br>
+        <a href="{% url 'social:begin' 'github' %}">Login with github</a>
     </div>
+
 </body>
 </html>
