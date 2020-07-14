@@ -11,7 +11,7 @@ from .views import(Registration,
                     ) 
 
 urlpatterns = [
-    path('', Home.as_view() , name='home'),
+    path('profile/', Home.as_view() , name='profile'),
     path('register/', Registration.as_view(), name='registration'),
     path('login/', LoginAPIView.as_view(), name='login'),
     path('logout/', Logout.as_view(), name='logout'),
