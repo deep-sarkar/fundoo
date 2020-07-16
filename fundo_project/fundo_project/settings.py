@@ -87,9 +87,9 @@ WSGI_APPLICATION = 'fundo_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'fundoo',
-        'USER': 'fundoo',
-        'PASSWORD': 'password',
+        'NAME': os.environ['NAME'],
+        'USER': os.environ['USER'],
+        'PASSWORD': os.environ['PASSWORD'],
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
@@ -141,20 +141,19 @@ STATICFILES_DIRS = [
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'wotbsingh@gmail.com'
-EMAIL_HOST_PASSWORD = '9950618403'
+EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 
 
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.github.GithubOAuth2',
-    # # 'social_core.backends.twitter.TwitterOAuth',
     'social_core.backends.facebook.FacebookOAuth2',
 
     'django.contrib.auth.backends.ModelBackend',
 )
 
-SOCIAL_AUTH_GITHUB_KEY = 'cc4f57f60d1b2da83bcb'
-SOCIAL_AUTH_GITHUB_SECRET = '1664d4d5d18c38464f814683d4ffe6ad9cd4d6fe'
+SOCIAL_AUTH_GITHUB_KEY = os.environ['SOCIAL_AUTH_GITHUB_KEY']
+SOCIAL_AUTH_GITHUB_SECRET = os.environ['SOCIAL_AUTH_GITHUB_SECRET']
 
-SOCIAL_AUTH_FACEBOOK_KEY = '704667983443300'
-SOCIAL_AUTH_FACEBOOK_SECRET = 'be5e680089aeb2e88642abc9d3d950d3'
+SOCIAL_AUTH_FACEBOOK_KEY = os.environ['SOCIAL_AUTH_FACEBOOK_KEY']
+SOCIAL_AUTH_FACEBOOK_SECRET = os.environ['SOCIAL_AUTH_FACEBOOK_SECRET']
