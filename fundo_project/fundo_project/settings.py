@@ -163,3 +163,6 @@ SOCIAL_AUTH_FACEBOOK_SECRET = os.environ['SOCIAL_AUTH_FACEBOOK_SECRET']
 LOGIN_URL = '/accounts/login'
 LOGOUT_URL = '/accounts/logout'
 LOGIN_REDIRECT_URL = '/accounts/profile'
+LOGIN_REQUIRED_URLS = [
+    r'^accounts/profile/$',
+]
