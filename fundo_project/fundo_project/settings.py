@@ -56,6 +56,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
+    #Custom middleware
+    'account.middleware.LoginRequiredMiddleware',
 ]
 
 ROOT_URLCONF = 'fundo_project.urls'
@@ -144,7 +146,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
 EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 
-
+#Social django
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.github.GithubOAuth2',
     'social_core.backends.facebook.FacebookOAuth2',
@@ -157,5 +159,7 @@ SOCIAL_AUTH_GITHUB_SECRET = os.environ['SOCIAL_AUTH_GITHUB_SECRET']
 SOCIAL_AUTH_FACEBOOK_KEY = os.environ['SOCIAL_AUTH_FACEBOOK_KEY']
 SOCIAL_AUTH_FACEBOOK_SECRET = os.environ['SOCIAL_AUTH_FACEBOOK_SECRET']
 
+#urls
 LOGIN_URL = '/accounts/login'
+LOGOUT_URL = '/accounts/logout'
 LOGIN_REDIRECT_URL = '/accounts/profile'
