@@ -60,7 +60,7 @@ import jwt
 User = get_user_model()
 
 #redis object
-redis_object = redis.Redis(host='localhost', port=6379,db=0)
+from . import redis
 
 #Home
 class Home(TemplateView):
@@ -159,9 +159,8 @@ class LoginAPIView(GenericAPIView):
                     'username':username
                 }
                 token = generate_token(payload)
-                redis_object.set(username,token)
+                redis.set_attribute(username,token)
                 return redirect('profile')
-                # return Response({'code':200,'msg':response_code[200]})
             return Response({'code':411,'msg':response_code[411]})
         return Response({'code':412,'msg':response_code[412]})
 
@@ -170,7 +169,7 @@ class Logout(GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         username = request.user.username
-        redis_object.delete(username)
+        redis.delete_attribute(username)
         logout(request)
         return Response({'code':200,'msg':response_code[200]})
 
