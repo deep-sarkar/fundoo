@@ -42,9 +42,6 @@ from smtplib import SMTPException
 #regular expression
 import re
 
-#redis
-import redis
-
 #validator
 from .validate import (validate_password_match,
                        validate_password_pattern_match,
