@@ -2,3 +2,4 @@ env
 __pycache__
 .vscode
 abc.txt
+fundo_project/logs
