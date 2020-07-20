@@ -163,6 +163,36 @@ SOCIAL_AUTH_FACEBOOK_SECRET = os.environ['SOCIAL_AUTH_FACEBOOK_SECRET']
 LOGIN_URL = '/accounts/login'
 LOGOUT_URL = '/accounts/logout'
 LOGIN_REDIRECT_URL = '/accounts/profile'
+
+#Url for login required middleware
 LOGIN_REQUIRED_URLS = [
     r'^accounts/profile/$',
 ]
+
+#LOGGING
+
+import os
+
+LOGGING ={
+    'version': 1,
+    'loggers':{
+        'django':{
+            'handlers':['file'],
+            'level':"DEBUG",
+        }
+    },
+    'handlers':{
+        'file':{
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'fundo_project/logs/debug.log',
+            'formatter':'simple',
+        }
+    },
+    'formatters':{
+            'simple': {
+            'format': '{levelname} {asctime} {message}',
+            'style': '{',
+        }
+    }
+}
