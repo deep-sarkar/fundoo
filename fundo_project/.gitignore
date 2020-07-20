@@ -3,3 +3,4 @@ __pycache__
 .vscode
 abc.txt
 fundo_project/logs
+notes/migrations
