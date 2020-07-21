@@ -22,4 +22,15 @@ class CreateNoteView(GenericAPIView):
             return Response({'code':201,'msg':response_code[201]})
         return Response({'code':405,'msg':response_code[405]})
 
-        
+class DisplayNoteView(GenericAPIView):
+
+    def get_object(self,id):
+        try:
+            return Note.objects.get(id=id)
+        except Note.DoesNotExist:
+            return Response({'code':405,'msg':response_code[405]})
+
+    def get(self, request, id=None):
+        note = self.get_object(id)
+        serializer = NoteSerializer(note)
+        return Response(serializer.data)
