@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_short_url',
     'social_django',
+    'storages',
 
     #projects
     'account',
@@ -197,3 +198,15 @@ LOGGING ={
         }
     }
 }
+
+
+#S3 bucket
+
+AWS_ACCESS_KEY_ID = 'AKIATRADVFU7RTTE3HUD'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'fundoo-notes-bucket'
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
