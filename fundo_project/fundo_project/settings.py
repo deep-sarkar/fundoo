@@ -169,6 +169,7 @@ LOGIN_REDIRECT_URL = '/accounts/profile'
 #Url for login required middleware
 LOGIN_REQUIRED_URLS = [
     r'^accounts/profile/$',
+    r'^notes/create/$',
 ]
 
 #LOGGING
