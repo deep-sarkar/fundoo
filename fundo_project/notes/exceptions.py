@@ -1,4 +1,5 @@
 from rest_framework.exceptions import APIException, NotFound
 
 class DoesNotExistException(APIException):
-    pass
+    code=401
+    detail="Not found"
