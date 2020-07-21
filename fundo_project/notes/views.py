@@ -5,7 +5,7 @@ from .models import Note
 from .serializers import NoteSerializer
 from account.status import response_code
 
-class CreateNotes(GenericAPIView):
+class CreateNoteView(GenericAPIView):
     serializer_class = NoteSerializer
     
     def post(self, request):
