@@ -170,7 +170,7 @@ LOGIN_REDIRECT_URL = '/accounts/profile'
 LOGIN_REQUIRED_URLS = [
     r'^accounts/profile/$',
     r'^notes/create/$',
-    r'^notes/display/$',
+    r'^notes/display/\d+/$',
 ]
 
 #LOGGING
