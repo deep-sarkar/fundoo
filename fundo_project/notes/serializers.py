@@ -21,4 +21,5 @@ class NoteSerializer(ModelSerializer):
 
     class Meta:
         model = Note
-        fields = ['user','title','note','image','label']
+        fields = ['id','user','title','note','image','label']
+        read_only_fields = ['id','user']
