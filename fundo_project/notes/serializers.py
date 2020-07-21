@@ -1,6 +1,17 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from .models import Label, Note
 
+class LabelSerializer(ModelSerializer):
+    user = SerializerMethodField('_user')
+    def _user(self, obj):
+        request = getattr(self.context, 'request', None)
+        if request:
+            return request.user
+            
+    class Meta:
+        model = Label
+        fields = ['user','label']
+
 class NoteSerializer(ModelSerializer):
     user = SerializerMethodField('_user')
     def _user(self, obj):
@@ -10,4 +21,4 @@ class NoteSerializer(ModelSerializer):
 
     class Meta:
         model = Note
-        fields = ['title','user','note','image','label']
+        fields = ['user','title','note','image','label']
