@@ -6,6 +6,17 @@ from .serializers import NoteSerializer, LabelSerializer
 from account.status import response_code
 from .exceptions import DoesNotExistException
 
+
+
+
+'''
+CreateNoteView(GenericAPIView) class has 2 methods
+    1. def get(self, request):  
+        get method will fetch all the notes for loggined user. And display it.
+    2. def post(self, request):
+        post method will be responsible for create notes and save it into database. Serializer will be responsible for
+        validation and serialize the data.
+'''
 class CreateNoteView(GenericAPIView):
     serializer_class = NoteSerializer
     queryset         = Note.objects.all()
@@ -65,3 +76,4 @@ class CreateLabelView(GenericAPIView):
             serializer.save(label_id=request.user)
             return Response({'code':201,'msg':response_code[201]})
         return Response({'code':405,'msg':response_code[405]})
+
