@@ -112,3 +112,12 @@ class DisplayLabelView(GenericAPIView):
         label      = self.get_object(id)
         serializer = LabelSerializer(label)
         return Response(serializer.data, status=200)
+
+    def put(self, request, id=None):
+        data       = request.data
+        label      = self.get_object(id)
+        serializer = LabelSerializer(label, data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=200)
+        return Response({'code':405,'msg':response_code[405]})
