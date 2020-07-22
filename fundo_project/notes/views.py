@@ -74,6 +74,15 @@ class DisplayNoteView(GenericAPIView):
         note.delete()
         return Response({'code':200,'msg':response_code[200]})
 
+
+'''
+CreateLabelView(GenericAPIView) class has 2 methods
+    1. def get(self, request):  
+        get method will fetch all the label for loggined user. And display it.
+    2. def post(self, request):
+        post method will be responsible for create label and save it into database. Serializer will be responsible for
+        validation and serialize the data.
+'''
 class CreateLabelView(GenericAPIView):
     serializer_class = LabelSerializer
     queryset         = Label.objects.all()
