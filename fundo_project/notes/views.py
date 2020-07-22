@@ -51,7 +51,9 @@ class DisplayNoteView(GenericAPIView):
 
     def get_object(self,id):
         try:
-            return Note.objects.get(id=id)
+            user = self.request.user
+            note = Note.objects.filter(user=user)
+            return note.get(id=id)
         except Note.DoesNotExist:
             raise DoesNotExistException
 
