@@ -117,7 +117,9 @@ class DisplayLabelView(GenericAPIView):
 
     def get_object(self, id):
         try:
-            return Label.objects.get(id=id)
+            user = self.request.user
+            label = Label.objects.filter(label_id=user)
+            return label.get(id=id)
         except Label.DoesNotExist:
             raise DoesNotExistException
 
