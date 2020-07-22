@@ -52,7 +52,7 @@ class DisplayNoteView(GenericAPIView):
     def get_object(self,id):
         try:
             return Note.objects.get(id=id)
-        except Note.DoesNotExist as e:
+        except Note.DoesNotExist:
             raise DoesNotExistException
 
     def get(self, request, id=None):
@@ -65,7 +65,7 @@ class DisplayNoteView(GenericAPIView):
         note       = self.get_object(id)
         serializer = NoteSerializer(note, data=request.data)
         if serializer.is_valid():
-            serializer.save(user_id=request.user.id)
+            serializer.save(user=request.user)
             return Response(serializer.data, status=200)
         return Response({'code':405,'msg':response_code[405]})
 
@@ -99,3 +99,11 @@ class CreateLabelView(GenericAPIView):
             return Response({'code':201,'msg':response_code[201]})
         return Response({'code':405,'msg':response_code[405]})
 
+class DisplayLabelView(GenericAPIView):
+    serializer_class = LabelSerializer
+
+    def get_object(self, id):
+        try:
+            return Label.objects.get(id=id)
+        except Label.DoesNotExist:
+            raise DoesNotExistException
