@@ -58,3 +58,10 @@ class CreateLabelView(GenericAPIView):
         labels = Label.objects.filter(label_id=request.user)
         serializer = LabelSerializer(labels, many=True)
         return Response(serializer.data)
+
+    def post(self, request):
+        serializer = LabelSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(label_id=request.user)
+            return Response({'code':201,'msg':response_code[201]})
+        return Response({'code':405,'msg':response_code[405]})
