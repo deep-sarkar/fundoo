@@ -99,6 +99,19 @@ class CreateLabelView(GenericAPIView):
             return Response({'code':201,'msg':response_code[201]})
         return Response({'code':405,'msg':response_code[405]})
 
+
+'''
+class DisplayLabelView(GenericAPIView) is dealing with single note and responsible for get, update or delete single note.
+This class have 4 methods.
+    1. def get_object(self,id): 
+        get_object method will fetch single label object by unique id. If object is not there it will raise DoesNotExistException
+    2. def get(self, request, id=None):
+        get method will display single label object according to serializer field.
+    3. def put(self, request, id=None):
+        put method is responsible for update any single label object witch is fetched by get method.
+    4. def delete(self, request, id=None):
+        delete method is responsible to delete any single label object witch is fetched by get method.
+'''
 class DisplayLabelView(GenericAPIView):
     serializer_class = LabelSerializer
 
