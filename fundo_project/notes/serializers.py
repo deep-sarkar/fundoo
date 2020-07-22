@@ -5,8 +5,8 @@ class LabelSerializer(ModelSerializer):
 
     class Meta:
         model            = Label
-        fields           = ['label_id','label']
-        read_only_fields = ['label_id']
+        fields           = ['id','label_id','label']
+        read_only_fields = ['id','label_id']
 
     def create(self, validated_data):
         label = Label.objects.create(**validated_data)
