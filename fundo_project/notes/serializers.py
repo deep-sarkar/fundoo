@@ -2,20 +2,20 @@ from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from .models import Label, Note
 
 class LabelSerializer(ModelSerializer):
-    user = SerializerMethodField('_user',read_only=True)
-    def _user(self, obj):
-        request = getattr(self.context, 'request', None)
-        if request:
-            return request.user
 
     class Meta:
-        model = Label
-        fields = ['user','label']
+        model            = Label
+        fields           = ['label_id','label']
+        read_only_fields = ['label_id']
+
+    def create(self, validated_data):
+        label = Label.objects.create(**validated_data)
+        return label
 
 class NoteSerializer(ModelSerializer):
     class Meta:
-        model = Note
-        fields = ['id','user','title','note','image','label']
+        model            = Note
+        fields           = ['id','user','title','note','image','label']
         read_only_fields = ['id','user']
 
     def create(self, validated_data):
