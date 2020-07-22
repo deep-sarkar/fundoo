@@ -15,12 +15,10 @@ class CreateNoteView(GenericAPIView):
         serializer = NoteSerializer(notes, many=True)
         return Response(serializer.data)
 
-    
     def post(self, request):
         serializer = NoteSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)
-            # print(request.user)
             return Response({'code':201,'msg':response_code[201]})
         return Response({'code':405,'msg':response_code[405]})
 
@@ -51,3 +49,12 @@ class DisplayNoteView(GenericAPIView):
         note = self.get_object(id)
         note.delete()
         return Response({'code':200,'msg':response_code[200]})
+
+class CreateLabelView(GenericAPIView):
+    serializer_class = LabelSerializer
+    queryset         = Label.objects.all()
+
+    def get(self, request):
+        labels = Label.objects.filter(label_id=request.user)
+        serializer = LabelSerializer(labels, many=True)
+        return Response(serializer.data)
