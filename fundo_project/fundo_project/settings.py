@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django_short_url',
     'social_django',
     'storages',
+    'rest_framework_swagger',
 
     #projects
     'account',
@@ -78,6 +79,9 @@ TEMPLATES = [
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
             ],
+            'libraries': { 
+                'staticfiles' : 'django.templatetags.static',
+                },
         },
     },
 ]
@@ -94,7 +98,7 @@ DATABASES = {
         'NAME': os.environ['NAME'],
         'USER': os.environ['USER'],
         'PASSWORD': os.environ['PASSWORD'],
-        'HOST': '127.0.0.1',
+        'HOST': os.environ['HOST'],
         'PORT': '5432',
     }
 }
@@ -212,5 +216,6 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 # STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 REST_FRAMEWORK = {
-    'EXCEPTION_HANDLER': 'notes.utils.custom_exception_handler'
+    'EXCEPTION_HANDLER': 'notes.utils.custom_exception_handler',
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
 }
