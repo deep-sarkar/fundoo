@@ -1,11 +1,20 @@
-from django.shortcuts import render
+#Rest Framework Import
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
+
+#Model Import
 from .models import Note, Label
+
+#Serializer Import
 from .serializers import NoteSerializer, LabelSerializer
+
+#Custom response and exception import
 from account.status import response_code
 from .exceptions import DoesNotExistException
 
+#Redis import
+from account import redis
+import pickle
 
 
 
@@ -29,7 +38,8 @@ class CreateNoteView(GenericAPIView):
     def post(self, request):
         serializer = NoteSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            instance = serializer.save(user=request.user)
+            redis.set_attribute(instance.id,pickle.dumps(serializer.data))
             return Response({'code':201,'msg':response_code[201]})
         return Response({'code':405,'msg':response_code[405]})
 
