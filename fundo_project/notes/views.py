@@ -68,9 +68,14 @@ class DisplayNoteView(GenericAPIView):
             raise DoesNotExistException
 
     def get(self, request, id=None):
-        note       = self.get_object(id)
-        serializer = NoteSerializer(note)
-        return Response(serializer.data, status=200)
+        try:
+            note = pickle.loads(redis.get_attribute(id))
+            if note != None:
+                return Response(note, status=400)
+        except AssertionError:
+            note       = self.get_object(id)
+            serializer = NoteSerializer(note)
+            return Response(serializer.data, status=200)
     
     def put(self, request, id=None):
         data       = request.data
