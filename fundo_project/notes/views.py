@@ -1,12 +1,13 @@
 #Rest Framework Import
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
+from django.db.models import Q
 
 #Model Import
 from .models import Note, Label
 
 #Serializer Import
-from .serializers import NoteSerializer, LabelSerializer
+from .serializers import NoteSerializer, LabelSerializer, SingleNoteSerializer
 
 #Custom response and exception import
 from account.status import response_code
@@ -57,30 +58,26 @@ This class have 4 methods.
         delete method is responsible to delete any single note object witch is fetched by get method.
 '''
 class DisplayNoteView(GenericAPIView):
-    serializer_class = NoteSerializer
+    serializer_class = SingleNoteSerializer
 
     def get_object(self,id):
         try:
             user = self.request.user
-            note = Note.objects.filter(user=user)
+            note = Note.objects.filter(Q(user=user) & Q(trash=False))
             return note.get(id=id)
         except Note.DoesNotExist:
             raise DoesNotExistException
 
     def get(self, request, id=None):
-        try:
-            note = pickle.loads(redis.get_attribute(id))
-            if note != None:
-                return Response(note, status=400)
-        except AssertionError:
             note       = self.get_object(id)
-            serializer = NoteSerializer(note)
+            serializer = SingleNoteSerializer(note)
             return Response(serializer.data, status=200)
-    
+        
+
     def put(self, request, id=None):
         data       = request.data
         note       = self.get_object(id)
-        serializer = NoteSerializer(note, data=request.data)
+        serializer = SingleNoteSerializer(note, data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)
             return Response(serializer.data, status=200)
