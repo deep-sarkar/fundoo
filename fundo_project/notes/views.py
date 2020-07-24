@@ -86,6 +86,16 @@ class DisplayNoteView(GenericAPIView):
             return Response(serializer.data, status=200)
         return Response({'code':405,'msg':response_code[405]})
 
+class AllTrashedNotesView(GenericAPIView):
+    serializer_class = TrashSerializer
+    queryset         = Note.objects.all()
+
+    def get(self, request):
+        user = self.request.user
+        note = Note.objects.filter(Q(user=user) & Q(trash=True))
+        serializer = TrashSerializer(note, many=True)
+        return Response(serializer.data, status=200)
+
 class TrashNoteView(GenericAPIView):
     serializer_class = TrashSerializer
 
