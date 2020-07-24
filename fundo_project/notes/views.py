@@ -82,7 +82,6 @@ class DisplayNoteView(GenericAPIView):
             serializer = SingleNoteSerializer(note)
             return Response(serializer.data, status=200)
         
-
     def put(self, request, id=None):
         note       = self.get_object(id)
         serializer = SingleNoteSerializer(note, data=request.data)
@@ -94,8 +93,13 @@ class DisplayNoteView(GenericAPIView):
 
 
 
+'''
+class AllTrashedNotesView(GenericAPIView) will deal with all notes which are in trash.
+    Class have 1 method ie. get
+    1. def get(self, request): 
+        will get and display trashed notes for login user.
 
-
+'''
 class AllTrashedNotesView(GenericAPIView):
     serializer_class = TrashSerializer
     queryset         = Note.objects.all()
