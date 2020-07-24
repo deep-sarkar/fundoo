@@ -40,7 +40,8 @@ class SingleNoteSerializer(serializers.ModelSerializer):
 class TrashSerializer(serializers.ModelSerializer):
     class Meta:
         model  = Note
-        fields = ['title','trash']
+        fields = ['id','title','trash']
+        read_only_fields = ['id']
 
 
 # class LabelFKField(serializers.PrimaryKeyRelatedField):
