@@ -37,6 +37,10 @@ class SingleNoteSerializer(serializers.ModelSerializer):
         fields           = '__all__'
         read_only_fields = ['id','user']
 
+class TrashSerializer(serializers.ModelSerializer):
+    class Meta:
+        model  = Note
+        fields = ['title','trash']
 
 
 # class LabelFKField(serializers.PrimaryKeyRelatedField):
