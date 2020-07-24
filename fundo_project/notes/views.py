@@ -7,7 +7,10 @@ from django.db.models import Q
 from .models import Note, Label
 
 #Serializer Import
-from .serializers import NoteSerializer, LabelSerializer, SingleNoteSerializer
+from .serializers import (NoteSerializer, 
+                          LabelSerializer,
+                          SingleNoteSerializer, 
+                          TrashSerializer)
 
 #Custom response and exception import
 from account.status import response_code
@@ -82,6 +85,18 @@ class DisplayNoteView(GenericAPIView):
             serializer.save(user=request.user)
             return Response(serializer.data, status=200)
         return Response({'code':405,'msg':response_code[405]})
+
+class TrashNoteView(GenericAPIView):
+    serializer_class = TrashSerializer
+
+    def get_object(self,id):
+        try:
+            user = self.request.user
+            note = Note.objects.filter(Q(user=user) & Q(trash=True))
+            return note.get(id=id)
+        except Note.DoesNotExist:
+            raise DoesNotExistException
+    
 
 
 
