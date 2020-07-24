@@ -1,23 +1,83 @@
-from rest_framework.serializers import ModelSerializer, SerializerMethodField
+from rest_framework import serializers
 from .models import Label, Note
+# from rest_framework.compat import unicode_to_repr
 
-class LabelSerializer(ModelSerializer):
-
+class LabelSerializer(serializers.ModelSerializer):
     class Meta:
         model            = Label
-        fields           = ['id','label_id','label']
+        fields           = '__all__'
         read_only_fields = ['id','label_id']
 
-    def create(self, validated_data):
-        label = Label.objects.create(**validated_data)
-        return label
+# class CurrentUserDefault(object):
+#     def set_context(self, serializer_field):
+#         self.user_id = serializer_field.context['request'].user.id
 
-class NoteSerializer(ModelSerializer):
+#     def __call__(self):
+#         return self.user_id
+
+#     def __repr__(self):
+#         return unicode_to_repr('%s()' % self.__class__.__name__)
+
+
+class NoteSerializer(serializers.ModelSerializer):
     class Meta:
         model            = Note
-        fields           = ['id','user','title','note','image','label']
+        fields           = '__all__'
+        read_only_fields = ['id','user','trash']
+
+    # def get_label(self,obj):
+    #     user = CurrentUserDefault()
+    #     label = label.objects.filter(label_id=user)
+    #     return label
+
+
+class SingleNoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model            = Note
+        fields           = '__all__'
         read_only_fields = ['id','user']
 
-    def create(self, validated_data):
-        note = Note.objects.create(**validated_data)
-        return note
+
+
+# class LabelFKField(serializers.PrimaryKeyRelatedField):
+#     def get_queryset(self):
+#         query_set = Label.objects.filter(label_id=self.context['request'].user)
+#         return query_set
+
+# class FilteredLabeListSerializer(serializers.ListSerializer):
+    
+#     def to_representation(self, data):
+#         data = data.filter(label_id=self.context['request'].user)
+#         return super(self).to_representation(data)
+
+# class FilteredLabelSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         list_serializer_class = FilteredLabeListSerializer
+#         model = Label
+
+# def get_serializer_class(self):
+#     user = self.request.user
+#     owner_choices = Label.objects.filter(label_id=user)
+
+#     class LabelSerializerByUser(serializers.ModelSerializer):
+#         label = serializers.Field('label_id', choices=owner_choices)
+
+#         class Meta:
+#             model            = Label
+#             fields           = ['id','label_id','label']
+#             read_only_fields = ['id','label_id']
+
+#     return LabelSerializerByUser
+
+# class CurrentUserDefault:
+#     """
+#     May be applied as a `default=...` value on a serializer field.
+#     Returns the current user.
+#     """
+#     requires_context = True
+
+#     @property
+#     def user_id(self):
+#         context={"request": request}
+#         return context.context['request'].user
+
