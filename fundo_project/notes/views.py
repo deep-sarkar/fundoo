@@ -97,7 +97,7 @@ class DisplayNoteView(GenericAPIView):
 class AllTrashedNotesView(GenericAPIView) will deal with all notes which are in trash.
     Class have 1 method ie. get
     1. def get(self, request): 
-        will get and display trashed notes for login user.
+        will get and display all trashed notes for login user.
 
 '''
 class AllTrashedNotesView(GenericAPIView):
@@ -114,7 +114,16 @@ class AllTrashedNotesView(GenericAPIView):
 
 
 
-
+'''
+class TrashNoteView(GenericAPIView) will deal with single notes in trash. 
+    Class have 3 methods ie. get_object, put, delete
+    1. def get_object(self,id): 
+        get_object method will fetch single object by unique id. If object is not there it will raise DoesNotExistException.
+    2. def put(self, request, id=None):
+        put method is responsible for update any single note to make it untrash.
+    3. def delete(self, request, id=None):
+        delete method is responsible to delete any single trashed note object witch is fetched by get method.
+'''
 class TrashNoteView(GenericAPIView):
     serializer_class = TrashSerializer
 
