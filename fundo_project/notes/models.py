@@ -16,6 +16,7 @@ class Note(models.Model):
     note  = models.TextField(blank=True,null=True)
     image = models.ImageField(upload_to = 'static/images',max_length=255, null=True, blank=True)
     label = models.ForeignKey(Label, on_delete=models.CASCADE, null=True, blank=True)
+    trash = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
