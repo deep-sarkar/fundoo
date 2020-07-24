@@ -22,6 +22,9 @@ import pickle
 
 
 
+
+
+
 '''
 CreateNoteView(GenericAPIView) class has 2 methods
     1. def get(self, request):  
@@ -46,6 +49,9 @@ class CreateNoteView(GenericAPIView):
             redis.set_attribute(instance.id,pickle.dumps(serializer.data))
             return Response({'code':201,'msg':response_code[201]})
         return Response({'code':405,'msg':response_code[405]})
+
+
+
 
 
 '''
@@ -85,6 +91,11 @@ class DisplayNoteView(GenericAPIView):
             return Response(serializer.data, status=200)
         return Response({'code':405,'msg':response_code[405]})
 
+
+
+
+
+
 class AllTrashedNotesView(GenericAPIView):
     serializer_class = TrashSerializer
     queryset         = Note.objects.all()
@@ -94,6 +105,11 @@ class AllTrashedNotesView(GenericAPIView):
         note = Note.objects.filter(Q(user=user) & Q(trash=True))
         serializer = TrashSerializer(note, many=True)
         return Response(serializer.data, status=200)
+
+
+
+
+
 
 class TrashNoteView(GenericAPIView):
     serializer_class = TrashSerializer
@@ -114,6 +130,11 @@ class TrashNoteView(GenericAPIView):
             return Response(serializer.data, status=200)
         return Response({'code':405,'msg':response_code[405]})
     
+    def delete(self, request, id=None):
+        note = self.get_object(id)
+        note.delete()
+        return Response({'code':200,'msg':response_code[200]})
+
 
 
 
@@ -141,6 +162,7 @@ class CreateLabelView(GenericAPIView):
             return Response({'code':201,'msg':response_code[201]})
         return Response({'code':405,'msg':response_code[405]})
 
+    
 
 '''
 class DisplayLabelView(GenericAPIView) is dealing with single note and responsible for get, update or delete single note.
