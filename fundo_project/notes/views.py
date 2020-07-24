@@ -78,7 +78,6 @@ class DisplayNoteView(GenericAPIView):
         
 
     def put(self, request, id=None):
-        data       = request.data
         note       = self.get_object(id)
         serializer = SingleNoteSerializer(note, data=request.data)
         if serializer.is_valid():
@@ -106,6 +105,14 @@ class TrashNoteView(GenericAPIView):
             return note.get(id=id)
         except Note.DoesNotExist:
             raise DoesNotExistException
+
+    def put(self, request, id=None):
+        note = self.get_object(id)
+        serializer = TrashSerializer(note, data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=200)
+        return Response({'code':405,'msg':response_code[405]})
     
 
 
