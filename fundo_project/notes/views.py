@@ -83,10 +83,6 @@ class DisplayNoteView(GenericAPIView):
             return Response(serializer.data, status=200)
         return Response({'code':405,'msg':response_code[405]})
 
-    def delete(self, request, id=None):
-        note = self.get_object(id)
-        note.delete()
-        return Response({'code':200,'msg':response_code[200]})
 
 
 '''
