@@ -4,7 +4,8 @@ from .views import (CreateNoteView,
                     CreateLabelView, 
                     DisplayLabelView, 
                     AllTrashedNotesView, 
-                    TrashNoteView)
+                    TrashNoteView,
+                    ReminderView)
 
 
 urlpatterns = [
@@ -14,4 +15,5 @@ urlpatterns = [
     path('display-label/<int:id>/', DisplayLabelView.as_view(), name='display-label'),
     path('trash/',AllTrashedNotesView.as_view(), name='all-trashed-notes'),
     path('trash/<int:id>/', TrashNoteView.as_view(), name='single-trash-note'),
+    path('reminder/', ReminderView.as_view(), name='reminder'),
 ]
