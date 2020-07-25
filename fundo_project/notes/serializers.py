@@ -23,12 +23,9 @@ class NoteSerializer(serializers.ModelSerializer):
     class Meta:
         model            = Note
         fields           = '__all__'
-        read_only_fields = ['id','user','trash']
+        read_only_fields = ['id','user','trash','reminder']
 
-    # def get_label(self,obj):
-    #     user = CurrentUserDefault()
-    #     label = label.objects.filter(label_id=user)
-    #     return label
+
 
 
 class SingleNoteSerializer(serializers.ModelSerializer):
