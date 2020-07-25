@@ -1,7 +1,10 @@
 #Rest Framework Import
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
+
+#Django imports
 from django.db.models import Q
+from django.core.paginator import Paginator, PageNotAnInteger, E
 
 #Model Import
 from .models import Note, Label
@@ -20,6 +23,10 @@ from .exceptions import DoesNotExistException
 from account import redis
 import pickle
 
+#Pagination
+# from .pagination import NoteLimitOffsetPagination
+# from rest_framework.pagination import LimitOffsetPagination
+
 
 
 
@@ -36,10 +43,24 @@ CreateNoteView(GenericAPIView) class has 2 methods
 class CreateNoteView(GenericAPIView):
     serializer_class = NoteSerializer
     queryset         = Note.objects.all()
+    # pagination_class = NoteLimitOffsetPagination
 
     def get(self, request):
+
+        # notes      = Note.objects.filter(user=request.user)
+        # serializer = NoteSerializer(notes, many=True)
+        # return Response(serializer.data)
+
         notes      = Note.objects.filter(user=request.user)
-        serializer = NoteSerializer(notes, many=True)
+        paginator  = Paginator(notes,3)
+        page = request.GET.get('page')
+        try:
+            note_details = paginator.page(page)
+        except PageNotAnInteger:
+            note_details = paginator.page(1)
+        except EmptyPage:
+            note_details = paginator.page(paginator.num_pages)
+        serializer = NoteSerializer(note_details, many=True)
         return Response(serializer.data)
 
     def post(self, request):
