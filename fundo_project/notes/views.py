@@ -1,6 +1,7 @@
 #Rest Framework Import
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
+from rest_framework import serializers
 
 #Django imports
 from django.db.models import Q
@@ -44,14 +45,8 @@ CreateNoteView(GenericAPIView) class has 2 methods
 class CreateNoteView(GenericAPIView):
     serializer_class = NoteSerializer
     queryset         = Note.objects.all()
-    # pagination_class = NoteLimitOffsetPagination
 
     def get(self, request):
-
-        # notes      = Note.objects.filter(user=request.user)
-        # serializer = NoteSerializer(notes, many=True)
-        # return Response(serializer.data)
-
         notes      = Note.objects.filter(user=request.user)
         paginator  = Paginator(notes,3)
         page = request.GET.get('page')
@@ -62,7 +57,7 @@ class CreateNoteView(GenericAPIView):
         except EmptyPage:
             note_details = paginator.page(paginator.num_pages)
         serializer = NoteSerializer(note_details, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=200)
 
     def post(self, request):
         serializer = NoteSerializer(data=request.data)
@@ -109,7 +104,7 @@ class DisplayNoteView(GenericAPIView):
         serializer = SingleNoteSerializer(note, data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)
-            return Response(serializer.data, status=200)
+            return Response({'code':202,'msg':response_code[202]})
         return Response({'code':405,'msg':response_code[405]})
 
 
