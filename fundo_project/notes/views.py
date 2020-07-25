@@ -245,7 +245,9 @@ class DisplayLabelView(GenericAPIView):
 
 
 
-
+'''
+class ReminderView(GenericAPIView) have one method which will get and display reminder for logied user
+'''
 class ReminderView(GenericAPIView):
     serializer_class = ReminderSerializer
     queryset = Note.objects.all()
