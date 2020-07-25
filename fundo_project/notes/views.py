@@ -4,7 +4,7 @@ from rest_framework.generics import GenericAPIView
 
 #Django imports
 from django.db.models import Q
-from django.core.paginator import Paginator, PageNotAnInteger, E
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 #Model Import
 from .models import Note, Label
@@ -13,7 +13,8 @@ from .models import Note, Label
 from .serializers import (NoteSerializer, 
                           LabelSerializer,
                           SingleNoteSerializer, 
-                          TrashSerializer)
+                          TrashSerializer,
+                          ReminderSerializer)
 
 #Custom response and exception import
 from account.status import response_code
@@ -187,7 +188,7 @@ class CreateLabelView(GenericAPIView):
     def get(self, request):
         labels     = Label.objects.filter(label_id=request.user)
         serializer = LabelSerializer(labels, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=200)
 
     def post(self, request):
         serializer = LabelSerializer(data=request.data)
@@ -239,3 +240,18 @@ class DisplayLabelView(GenericAPIView):
         note = self.get_object(id)
         note.delete()
         return Response({'code':200,'msg':response_code[200]})
+
+
+
+
+
+
+class ReminderView(GenericAPIView):
+    serializer_class = ReminderSerializer
+    queryset = Note.objects.all()
+    
+    def get(self,request):
+        user        = request.user
+        reminder    = Note.objects.filter(Q(user=user) & Q(trash=False)).exclude(reminder=None)
+        serializer  = ReminderSerializer(reminder, many=True)
+        return Response(serializer.data,status=200)
