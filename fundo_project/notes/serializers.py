@@ -8,22 +8,21 @@ class LabelSerializer(serializers.ModelSerializer):
         fields           = '__all__'
         read_only_fields = ['id','label_id']
 
-# class CurrentUserDefault(object):
-#     def set_context(self, serializer_field):
-#         self.user_id = serializer_field.context['request'].user.id
-
-#     def __call__(self):
-#         return self.user_id
-
-#     def __repr__(self):
-#         return unicode_to_repr('%s()' % self.__class__.__name__)
-
-
 class NoteSerializer(serializers.ModelSerializer):
+    # label= serializers.SerializerMethodField()
+
+    # def get_label(self, obj):
+    #     user = self.context['request'].user
+    #     label = Label.objects.filter(label_id=user)
+    #     return label
+
     class Meta:
         model            = Note
         fields           = '__all__'
         read_only_fields = ['id','user','trash','reminder']
+
+
+    
 
 class SingleNoteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -34,8 +33,8 @@ class SingleNoteSerializer(serializers.ModelSerializer):
 class TrashSerializer(serializers.ModelSerializer):
     class Meta:
         model  = Note
-        fields = ['id','title','trash']
-        read_only_fields = ['id','title']
+        fields = ['trash']
+    
 
 class ReminderSerializer(serializers.ModelSerializer):
     class Meta:
@@ -44,6 +43,15 @@ class ReminderSerializer(serializers.ModelSerializer):
         read_only_fields = ['id','title']
 
 
+# class CurrentUserDefault(object):
+#     def set_context(self, serializer_field):
+#         self.user_id = serializer_field.context['request'].user.id
+
+#     def __call__(self):
+#         return self.user_id
+
+#     def __repr__(self):
+#         return unicode_to_repr('%s()' % self.__class__.__name__)
 
 # class LabelFKField(serializers.PrimaryKeyRelatedField):
 #     def get_queryset(self):
