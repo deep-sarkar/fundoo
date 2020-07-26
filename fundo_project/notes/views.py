@@ -25,14 +25,6 @@ from .exceptions import DoesNotExistException
 from account import redis
 import pickle
 
-#Pagination
-# from .pagination import NoteLimitOffsetPagination
-# from rest_framework.pagination import LimitOffsetPagination
-
-
-
-
-
 
 '''
 CreateNoteView(GenericAPIView) class has 2 methods
