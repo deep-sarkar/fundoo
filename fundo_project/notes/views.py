@@ -42,7 +42,7 @@ class CreateNoteView(GenericAPIView):
     queryset         = Note.objects.all()
 
     def get(self, request):
-        notes      = Note.objects.filter(user=request.user)
+        notes      = Note.objects.filter(user=request.user,trash=False, archives=False)
         paginator  = Paginator(notes,3)
         page = request.GET.get('page')
         try:
