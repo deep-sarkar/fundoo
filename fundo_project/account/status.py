@@ -1,7 +1,7 @@
 response_code = {
     200 : "SUCCESS",
     201 : "CREATED",
-    202 :"UPDATED",
+    202 : "UPDATED",
     300 : "VALIDATION_ERROR",
     301 : "ERROR_OCCOURED_WHILE_SEND_ACTIVATION_EMAIL",
     302 : "USER_IS_ALREADY_ACTIVATED",
@@ -20,4 +20,5 @@ response_code = {
     411 : "VERIFY_EMAIL_FIRST",
     412 : "WRONG_PASSWORD",
     413 : "LOGIN_FIRST",
+    414 : "INVALID_OPERATION",
 }
