@@ -25,6 +25,9 @@ from .exceptions import DoesNotExistException
 from account import redis
 import pickle
 
+#RE
+import re
+
 
 '''
 CreateNoteView(GenericAPIView) class has 2 methods
@@ -228,7 +231,8 @@ class DisplayLabelView(GenericAPIView):
         notes = Note.objects.filter(user=request.user,label__icontains=label)
         try:
             for note in notes:
-                all_label = note.label.split(',')
+                labels = note.label
+                all_label=re.split(', |,', labels)
                 all_label.remove(str(label))
                 separator = ','
                 labels_after_delete = separator.join(all_label)
