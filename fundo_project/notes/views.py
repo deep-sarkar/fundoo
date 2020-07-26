@@ -226,14 +226,17 @@ class DisplayLabelView(GenericAPIView):
     def delete(self, request, id=None):
         label = self.get_object(id)
         notes = Note.objects.filter(user=request.user,label__icontains=label)
-        for note in notes:
-            all_label = note.label.split(',')
-            all_label.remove(str(label))
-            separator = ','
-            labels_after_delete = separator.join(all_label)
-            note.label=labels_after_delete
-            note.save()
-        label.delete()
+        try:
+            for note in notes:
+                all_label = note.label.split(',')
+                all_label.remove(str(label))
+                separator = ','
+                labels_after_delete = separator.join(all_label)
+                note.label=labels_after_delete
+                note.save()
+            label.delete()
+        except ValueError:
+            return Response({'code':414,'msg':response_code[414]})
         return Response({'code':200,'msg':response_code[200]})
 
 
