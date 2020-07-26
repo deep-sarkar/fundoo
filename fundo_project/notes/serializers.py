@@ -13,6 +13,15 @@ class NoteSerializer(serializers.ModelSerializer):
         fields           = '__all__'
         read_only_fields = ['id','user','trash']
 
+    def create(self, validated_data):
+        user  = validated_data['user']
+        label = validated_data['label']
+        note  = Note.objects.create(**validated_data)
+        labels = label.split(',')
+        for label in labels:
+            Label.objects.get_or_create(label_id=user, label=label)
+        return note
+
 class SingleNoteSerializer(serializers.ModelSerializer):
     class Meta:
         model            = Note
