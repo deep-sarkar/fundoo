@@ -248,7 +248,7 @@ class DisplayLabelView(GenericAPIView):
 
 
 '''
-class ReminderView(GenericAPIView) have one method which will get and display reminder for logied user
+class ReminderView(GenericAPIView) have one method which will get and display reminder for login user
 '''
 class ReminderView(GenericAPIView):
     serializer_class = ReminderSerializer
@@ -260,6 +260,9 @@ class ReminderView(GenericAPIView):
         serializer  = ReminderSerializer(reminder, many=True)
         return Response(serializer.data,status=200)
 
+'''
+class ArchivesNoteView(GenericAPIView) have one method which will get and display archive notes for login user
+'''
 class ArchivesNoteView(GenericAPIView):
     serializers = NoteSerializer
     queryset    = Note.objects.all()
