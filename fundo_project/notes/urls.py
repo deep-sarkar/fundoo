@@ -6,7 +6,8 @@ from .views import (CreateNoteView,
                     AllTrashedNotesView, 
                     TrashNoteView,
                     ReminderView,
-                    ArchivesNoteView)
+                    ArchivesNoteView,
+                    PinNoteView)
 
 
 urlpatterns = [
@@ -18,4 +19,5 @@ urlpatterns = [
     path('trash/<int:id>/', TrashNoteView.as_view(), name='single-trash-note'),
     path('reminder/', ReminderView.as_view(), name='reminder'),
     path('archives/', ArchivesNoteView.as_view(), name='archive'),
+    path('pinnotes/', PinNoteView.as_view(), name='pin-note'),
 ]
