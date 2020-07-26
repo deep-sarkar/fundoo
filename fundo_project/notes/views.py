@@ -259,3 +259,13 @@ class ReminderView(GenericAPIView):
         reminder    = Note.objects.filter(Q(user=user) & Q(trash=False)).exclude(reminder=None)
         serializer  = ReminderSerializer(reminder, many=True)
         return Response(serializer.data,status=200)
+
+class ArchivesNoteView(GenericAPIView):
+    serializers = NoteSerializer
+    queryset    = Note.objects.all()
+
+    def get(self, request):
+        user        = request.user
+        archives    = Note.objects.filter(user=user, trash=False, archives=True)
+        serializer  = NoteSerializer(archives, many=True)
+        return Response(serializer.data,status=200)
