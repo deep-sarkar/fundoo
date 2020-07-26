@@ -276,7 +276,9 @@ class ArchivesNoteView(GenericAPIView):
         return Response(serializer.data,status=200)
 
 
-
+'''
+class PinNoteView(GenericAPIView) have one method which will get and display all pinned notes for login user
+'''
 class PinNoteView(GenericAPIView):
     serializer_class = NoteSerializer
     queryset    = Note.objects.all()
