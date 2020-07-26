@@ -19,6 +19,7 @@ class NoteSerializer(serializers.ModelSerializer):
         note  = Note.objects.create(**validated_data)
         labels = label.split(',')
         for label in labels:
+            label = label.strip()
             Label.objects.get_or_create(label_id=user, label=label)
         return note
 
@@ -43,6 +44,7 @@ class SingleNoteSerializer(serializers.ModelSerializer):
         instance.label     = validated_data.get("label", instance.label)
         labels = label.split(',')
         for label in labels:
+            label = label.strip()
             Label.objects.get_or_create(label_id=user, label=label)
         instance.save()
         return instance
