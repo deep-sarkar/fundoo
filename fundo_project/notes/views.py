@@ -240,7 +240,7 @@ class DisplayLabelView(GenericAPIView):
                 note.save()
             label.delete()
         except ValueError:
-            return Response({'code':414,'msg':response_code[414]})
+            raise DoesNotExistException
         return Response({'code':200,'msg':response_code[200]})
 
 
