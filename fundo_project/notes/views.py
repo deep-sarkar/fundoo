@@ -288,3 +288,16 @@ class PinNoteView(GenericAPIView):
         archives    = Note.objects.filter(user=user, trash=False, pin=True)
         serializer  = NoteSerializer(archives, many=True)
         return Response(serializer.data,status=200)
+
+
+
+class DisplayNoteByLabelView(GenericAPIView):
+    serializer_class = NoteSerializer
+    queryset    = Note.objects.all()
+
+    def get(self, request, label):
+        notes = Note.objects.filter(user=request.user, trash=False, label=label)
+        if notes.count()==0:
+            raise DoesNotExistException
+        serializer = NoteSerializer(notes, many=True)
+        return Response(serializer.data,status=200)
