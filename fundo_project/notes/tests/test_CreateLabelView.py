@@ -10,3 +10,8 @@ class TestCreateLabelView:
         request  = RequestFactory().post('/',data)
         response = CreateLabelView.as_view()(request)
         assert response.data['code'] == 405
+
+    def test_get_method_returns_200(self):
+        request  = RequestFactory().get('/')
+        response = CreateLabelView.as_view()(request)
+        assert response.status_code == 200
