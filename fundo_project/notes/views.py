@@ -296,7 +296,7 @@ class DisplayNoteByLabelView(GenericAPIView):
     queryset    = Note.objects.all()
 
     def get(self, request, label):
-        notes = Note.objects.filter(user=request.user, trash=False, label=label)
+        notes = Note.objects.filter(user=request.user, trash=False, label__icontains=label)
         if notes.count()==0:
             raise DoesNotExistException
         serializer = NoteSerializer(notes, many=True)
