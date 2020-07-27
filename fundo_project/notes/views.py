@@ -290,7 +290,10 @@ class PinNoteView(GenericAPIView):
         return Response(serializer.data,status=200)
 
 
-
+'''
+DisplayNoteByLabelView(GenericAPIView) have get method only. It takes label as query param arguement and filter records 
+    if that label is present in any of notes, it will display all those notes.
+'''
 class DisplayNoteByLabelView(GenericAPIView):
     serializer_class = NoteSerializer
     queryset    = Note.objects.all()
