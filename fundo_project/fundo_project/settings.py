@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'social_django',
     'storages',
     'rest_framework_swagger',
+    'colorful',
 
     #projects
     'account',
