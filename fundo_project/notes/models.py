@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.contrib.postgres.fields import ArrayField
 
 User = get_user_model()
 
@@ -20,7 +21,7 @@ class Note(models.Model):
     archives  = models.BooleanField(default=False)
     trash     = models.BooleanField(default=False)
     pin       = models.BooleanField(default=False)
-    label     = models.CharField(max_length=120,blank=True, null=True)
+    label     = ArrayField(models.CharField(max_length=120), null=True, blank=True)
 
     class Meta:
         ordering=['-id']
