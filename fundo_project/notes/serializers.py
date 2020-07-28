@@ -33,7 +33,6 @@ class SingleNoteSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         user       = validated_data['user']
-        print(user)
         labels     = validated_data['label']
         instance.title     = validated_data.get("title", instance.title)
         instance.note      = validated_data.get("note", instance.note)
