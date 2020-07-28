@@ -15,7 +15,10 @@ class NoteSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user  = validated_data['user']
-        labels = validated_data['label']
+        try:
+            labels = validated_data['label']
+        except KeyError:
+            labels = []
         note  = Note.objects.create(**validated_data)
         for label in labels:
             Label.objects.get_or_create(label_id=user, label=label)
@@ -30,6 +33,7 @@ class SingleNoteSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         user       = validated_data['user']
+        print(user)
         labels     = validated_data['label']
         instance.title     = validated_data.get("title", instance.title)
         instance.note      = validated_data.get("note", instance.note)
