@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
+from colorful.fields import RGBColorField
 
 User = get_user_model()
 
@@ -21,7 +22,9 @@ class Note(models.Model):
     archives  = models.BooleanField(default=False)
     trash     = models.BooleanField(default=False)
     pin       = models.BooleanField(default=False)
-    label     = ArrayField(models.CharField(max_length=120), null=True, blank=True)
+    label     = ArrayField(models.CharField(max_length=120, blank=True, null=True), null=True, blank=True)
+    color     = RGBColorField(colors=['#FF0000', '#00FF00', '#0000FF'],default='#b0bfb5')
+
 
     class Meta:
         ordering=['-id']
