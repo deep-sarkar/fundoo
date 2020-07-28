@@ -232,11 +232,7 @@ class DisplayLabelView(GenericAPIView):
         try:
             for note in notes:
                 labels = note.label
-                all_label=re.split(', |,', labels)
-                all_label.remove(str(label))
-                separator = ','
-                labels_after_delete = separator.join(all_label)
-                note.label=labels_after_delete
+                labels.remove(str(label))
                 note.save()
             label.delete()
         except ValueError:
