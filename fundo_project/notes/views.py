@@ -96,6 +96,11 @@ class DisplayNoteView(GenericAPIView):
         
     def put(self, request, id=None):
         note       = self.get_object(id)
+        try:
+            label = request.data['label']
+        except KeyError:
+            label = {"label":[]}
+            request.data.update(label)
         serializer = SingleNoteSerializer(note, data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)
