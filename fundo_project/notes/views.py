@@ -228,7 +228,7 @@ class DisplayLabelView(GenericAPIView):
 
     def delete(self, request, id=None):
         label = self.get_object(id)
-        notes = Note.objects.filter(user=request.user,label__icontains=label)
+        notes = Note.objects.filter(user=request.user,label__contains=label)
         try:
             for note in notes:
                 labels = note.label
@@ -295,7 +295,7 @@ class DisplayNoteByLabelView(GenericAPIView):
     queryset    = Note.objects.all()
 
     def get(self, request, label):
-        notes = Note.objects.filter(user=request.user, trash=False, label__icontains=label)
+        notes = Note.objects.filter(user=request.user, trash=False, label__contains=[str(label)])
         if notes.count()==0:
             raise DoesNotExistException
         serializer = NoteSerializer(notes, many=True)
