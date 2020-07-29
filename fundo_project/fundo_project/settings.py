@@ -45,11 +45,18 @@ INSTALLED_APPS = [
     'storages',
     'rest_framework_swagger',
     'colorful',
+    'django_elasticsearch_dsl',
 
     #projects
     'account',
     'notes',
 ]
+
+ELASTICSEARCH_DSL = {
+    'default':{
+        'hosts':os.environ['ELASTIC_SEARCH_HOST'],
+    }
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
