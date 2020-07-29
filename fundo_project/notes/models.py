@@ -7,7 +7,7 @@ User = get_user_model()
 
 class Label(models.Model):
     label_id    = models.ForeignKey(User, on_delete=models.CASCADE, to_field='username')
-    label       = models.CharField(unique=True, max_length=30, null=False, blank=False)
+    label       = models.CharField(max_length=30, null=False, blank=False)
 
     def __str__(self):
         return self.label
