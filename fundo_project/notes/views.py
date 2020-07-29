@@ -29,6 +29,15 @@ import pickle
 import re
 
 
+#Elastic search
+from .documents import NoteDocument
+
+
+#Django
+from django.shortcuts import render
+
+
+
 '''
 CreateNoteView(GenericAPIView) class has 2 methods
     1. def get(self, request):  
@@ -90,9 +99,9 @@ class DisplayNoteView(GenericAPIView):
             raise DoesNotExistException
 
     def get(self, request, id=None):
-            note       = self.get_object(id)
-            serializer = SingleNoteSerializer(note)
-            return Response(serializer.data, status=200)
+        note       = self.get_object(id)
+        serializer = SingleNoteSerializer(note)
+        return Response(serializer.data, status=200)
         
     def put(self, request, id=None):
         note       = self.get_object(id)
@@ -305,3 +314,15 @@ class DisplayNoteByLabelView(GenericAPIView):
             raise DoesNotExistException
         serializer = NoteSerializer(notes, many=True)
         return Response(serializer.data,status=200)
+
+
+def search_by_title(request):
+    user = request.user.username
+    title = request.GET.get('title')
+    notes =[]
+    if title:
+        all_notes = NoteDocument.search().query("match",title=title)
+        for note in all_notes:
+            if note.user['username'] == user:
+                notes.append(note)
+    return render(request,'notes/search.html',{'notes':notes})
