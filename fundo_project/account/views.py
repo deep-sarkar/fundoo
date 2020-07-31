@@ -59,6 +59,9 @@ User = get_user_model()
 #redis object
 from . import redis
 
+#Static data
+import static_data
+
 #Home
 class Home(TemplateView):
     template_name = 'account/home.html'
@@ -113,7 +116,7 @@ class Registration(GenericAPIView):
         final_url   = surl.split('/')
         curren_site = get_current_site(request)
         domain      = curren_site.domain
-        subject     = "Account activation url"
+        subject     = static_data.ACCOUNT_ACTIVATION_SUBJECT
         msg = render_to_string(
                 'account/account_activation.html',
                 {
@@ -237,7 +240,7 @@ class ForgotPasswordView(GenericAPIView):
         domain_name = current_site.domain
         surl = get_surl(str(token))
         final_url = surl.split("/")
-        mail_subject = "Reset Your password by clicking below link"
+        mail_subject = static_data.PASSWORD_RESET_MESSAGE
         msg = render_to_string(
             'account/forgot_password.html',
             {
