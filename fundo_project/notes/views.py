@@ -36,6 +36,9 @@ from .documents import NoteDocument
 #Django
 from django.shortcuts import render
 
+#Static data
+import static_data
+
 
 
 '''
@@ -52,7 +55,7 @@ class CreateNoteView(GenericAPIView):
 
     def get(self, request):
         notes      = Note.objects.filter(user=request.user,trash=False, archives=False)
-        paginator  = Paginator(notes,3)
+        paginator  = Paginator(notes,static_data.ITEMS_PER_PAGE)
         page = request.GET.get('page')
         try:
             note_details = paginator.page(page)
