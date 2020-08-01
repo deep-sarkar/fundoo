@@ -18,7 +18,7 @@ class Note(models.Model):
     note      = models.TextField(blank=True,null=True)
     urls      = models.URLField(blank=True, null=True)
     image     = models.ImageField(upload_to = 'static/images',max_length=255, null=True, blank=True)
-    reminder  = models.TimeField(auto_now=False,auto_now_add=False, null=True)
+    reminder  = models.TimeField(auto_now_add=False,auto_now=False, null=True)
     archives  = models.BooleanField(default=False)
     trash     = models.BooleanField(default=False)
     pin       = models.BooleanField(default=False)
