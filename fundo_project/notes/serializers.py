@@ -8,6 +8,8 @@ class LabelSerializer(serializers.ModelSerializer):
         read_only_fields = ['id','label_id']
 
 class NoteSerializer(serializers.ModelSerializer):
+    reminder = serializers.TimeField(format="%H:%M", required=False)
+    
     class Meta:
         model            = Note
         fields           = '__all__'
@@ -26,6 +28,8 @@ class NoteSerializer(serializers.ModelSerializer):
 
 class SingleNoteSerializer(serializers.ModelSerializer):
     label = serializers.ListField(child=serializers.CharField())
+    reminder = serializers.TimeField(format="%H:%M", required=False)
+
     class Meta:
         model            = Note
         fields           = ['user','title','note','urls','image','reminder','archives','trash','pin','label']
