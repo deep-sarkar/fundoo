@@ -24,7 +24,6 @@ class NoteDocument(Document):
             'id',
             'title',
             'note',
-            'reminder',
             'urls',
         ]
 
