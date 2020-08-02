@@ -39,6 +39,8 @@ from django.shortcuts import render
 #Static data
 import static_data
 
+from .producer import add_reminders_to_queue
+
 
 
 '''
@@ -67,8 +69,14 @@ class CreateNoteView(GenericAPIView):
         return Response(serializer.data, status=200)
 
     def post(self, request):
+        user_email = request.user.email
         serializer = NoteSerializer(data=request.data)
         if serializer.is_valid():
+            try:
+                reminder = request.data['reminder']
+                add_reminders_to_queue(user_email,serializer.data)
+            except KeyError:
+                reminder = None
             instance = serializer.save(user=request.user)
             redis.set_attribute(instance.id,pickle.dumps(serializer.data))
             return Response({'code':201,'msg':response_code[201]})
@@ -108,6 +116,7 @@ class DisplayNoteView(GenericAPIView):
         
     def put(self, request, id=None):
         note       = self.get_object(id)
+        user_email = request.user.email
         try:
             label = request.data['label']
         except KeyError:
@@ -116,6 +125,11 @@ class DisplayNoteView(GenericAPIView):
         serializer = SingleNoteSerializer(note, data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)
+            try:
+                reminder = request.data['reminder']
+                add_reminders_to_queue(user_email,serializer.data)
+            except KeyError:
+                reminder = None
             return Response({'code':202,'msg':response_code[202]})
         return Response({'code':405,'msg':response_code[405]})
 
