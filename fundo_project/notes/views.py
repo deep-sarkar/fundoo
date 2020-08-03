@@ -115,8 +115,17 @@ class DisplayNoteView(GenericAPIView):
     serializer_class = SingleNoteSerializer
 
     def get_object(self,id):
+        user = self.request.user
+        user_id  = user.id
+        username = user.username
+        cache_key = str(username)+str(user_id)
+        notes = cache.get(cache_key)
+        if notes != None:
+            for note in notes:
+                print(note)
+                if note.id == id and note.trash == False:
+                    return note
         try:
-            user = self.request.user
             note = Note.objects.filter(Q(user=user) & Q(trash=False))
             return note.get(id=id)
         except Note.DoesNotExist:
