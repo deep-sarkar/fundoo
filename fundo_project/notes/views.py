@@ -79,6 +79,9 @@ class CreateNoteView(GenericAPIView):
 
     def post(self, request):
         user_email = request.user.email
+        user_id  = request.user.id
+        username = request.user.username
+        cache_key = str(username)+str(user_id)
         serializer = NoteSerializer(data=request.data)
         if serializer.is_valid():
             try:
@@ -87,7 +90,8 @@ class CreateNoteView(GenericAPIView):
             except KeyError:
                 reminder = None
             instance = serializer.save(user=request.user)
-            # cache.add(str(username),serializer.data)
+            note = Note.objects.filter(id=instance.id,trash=False, archives=False)
+            cache.add(cache_key,instance)
             return Response({'code':201,'msg':response_code[201]})
         return Response({'code':405,'msg':response_code[405]})
 
