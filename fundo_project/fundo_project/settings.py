@@ -186,8 +186,6 @@ LOGIN_REQUIRED_URLS = [
 
 #LOGGING
 
-import os
-
 LOGGING ={
     'version': 1,
     'loggers':{
@@ -231,3 +229,15 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ]
 }
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': os.environ['REDIS_LOCATION'],
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+
+CACHE_TTL = 60 * 15
