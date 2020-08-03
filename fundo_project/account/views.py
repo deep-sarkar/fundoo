@@ -58,6 +58,7 @@ User = get_user_model()
 
 #redis object
 from . import redis
+from django.core.cache import cache
 
 #Static data
 import static_data
@@ -169,6 +170,9 @@ class Logout(GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         username = request.user.username
+        user_id  = request.user.id
+        cache_key = str(username)+str(user_id)
+        cache.delete(cache_key)
         redis.delete_attribute(username)
         logout(request)
         return Response({'code':200,'msg':response_code[200]})
