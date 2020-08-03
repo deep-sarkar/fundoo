@@ -164,8 +164,9 @@ class DisplayNoteView(GenericAPIView):
                 note = Note.objects.filter(id=instance.id, trash=False, archives=False)
                 for item in notes:
                     if item.id == id:
-                        item.delete()
-                        notes.union(note)
+                        notes.exclude(id=id)
+                        notes = notes.union(note)
+                        cache.set(cache_key,notes)
             return Response({'code':202,'msg':response_code[202]})
         return Response({'code':405,'msg':response_code[405]})
 
