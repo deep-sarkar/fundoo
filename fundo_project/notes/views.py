@@ -64,6 +64,8 @@ class CreateNoteView(GenericAPIView):
         notes = cache.get(cache_key)
         if notes == None:
             notes = Note.objects.filter(user=request.user,trash=False, archives=False)
+        else:
+            notes = notes.order_by('-pin','-id')
         if cache.get(cache_key) == None:
             cache.set(cache_key, notes)
         paginator  = Paginator(notes,static_data.ITEMS_PER_PAGE)
@@ -84,12 +86,12 @@ class CreateNoteView(GenericAPIView):
         cache_key = str(username)+str(user_id)
         serializer = NoteSerializer(data=request.data)
         if serializer.is_valid():
+            instance = serializer.save(user=request.user)
             try:
                 reminder = request.data['reminder']
                 add_reminders_to_queue(user_email,serializer.data)
             except KeyError:
                 reminder = None
-            instance = serializer.save(user=request.user)
             note = Note.objects.filter(id=instance.id, trash=False, archives=False)
             existing_notes = cache.get(cache_key)
             if existing_notes != None:
