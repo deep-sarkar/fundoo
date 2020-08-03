@@ -90,8 +90,10 @@ class CreateNoteView(GenericAPIView):
             except KeyError:
                 reminder = None
             instance = serializer.save(user=request.user)
-            note = Note.objects.filter(id=instance.id,trash=False, archives=False)
-            cache.add(cache_key,instance)
+            note = Note.objects.filter(id=instance.id, trash=False, archives=False)
+            existing_notes = cache.get(cache_key)
+            if existing_notes != None:
+                cache.set(cache_key,existing_notes.union(note))
             return Response({'code':201,'msg':response_code[201]})
         return Response({'code':405,'msg':response_code[405]})
 
@@ -122,7 +124,6 @@ class DisplayNoteView(GenericAPIView):
         notes = cache.get(cache_key)
         if notes != None:
             for note in notes:
-                print(note)
                 if note.id == id and note.trash == False:
                     return note
         try:
@@ -138,7 +139,11 @@ class DisplayNoteView(GenericAPIView):
         
     def put(self, request, id=None):
         note       = self.get_object(id)
-        user_email = request.user.email
+        user = request.user
+        user_id  = user.id
+        username = user.username
+        cache_key = str(username)+str(user_id)
+        user_email = user.email
         try:
             label = request.data['label']
         except KeyError:
@@ -146,12 +151,19 @@ class DisplayNoteView(GenericAPIView):
             request.data.update(label)
         serializer = SingleNoteSerializer(note, data=request.data)
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            instance = serializer.save(user=request.user)
             try:
                 reminder = request.data['reminder']
                 add_reminders_to_queue(user_email,serializer.data)
             except KeyError:
                 reminder = None
+            notes = cache.get(cache_key)
+            if notes != None:
+                note = Note.objects.filter(id=instance.id, trash=False, archives=False)
+                for item in notes:
+                    if item.id == id:
+                        notes.delete(item)
+                        notes.union(note)
             return Response({'code':202,'msg':response_code[202]})
         return Response({'code':405,'msg':response_code[405]})
 
