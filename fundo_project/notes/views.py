@@ -21,10 +21,6 @@ from .serializers import (NoteSerializer,
 from account.status import response_code
 from .exceptions import DoesNotExistException
 
-#Redis import
-from account import redis
-import pickle
-
 #RE
 import re
 
@@ -39,7 +35,13 @@ from django.shortcuts import render
 #Static data
 import static_data
 
+#KAFKA producer
 from .producer import add_reminders_to_queue
+
+#CACHE
+from django.core.cache import cache
+
+
 
 
 
@@ -56,7 +58,14 @@ class CreateNoteView(GenericAPIView):
     queryset         = Note.objects.all()
 
     def get(self, request):
-        notes      = Note.objects.filter(user=request.user,trash=False, archives=False)
+        user_id  = request.user.id
+        username = request.user.username
+        cache_key = str(username)+str(user_id)
+        notes = cache.get(cache_key)
+        if notes == None:
+            notes = Note.objects.filter(user=request.user,trash=False, archives=False)
+        if cache.get(cache_key) == None:
+            cache.set(cache_key, notes)
         paginator  = Paginator(notes,static_data.ITEMS_PER_PAGE)
         page = request.GET.get('page')
         try:
@@ -65,7 +74,7 @@ class CreateNoteView(GenericAPIView):
             note_details = paginator.page(1)
         except EmptyPage:
             note_details = paginator.page(paginator.num_pages)
-        serializer = NoteSerializer(note_details, many=True)
+        serializer = NoteSerializer(notes, many=True)
         return Response(serializer.data, status=200)
 
     def post(self, request):
@@ -78,7 +87,7 @@ class CreateNoteView(GenericAPIView):
             except KeyError:
                 reminder = None
             instance = serializer.save(user=request.user)
-            redis.set_attribute(instance.id,pickle.dumps(serializer.data))
+            # cache.add(str(username),serializer.data)
             return Response({'code':201,'msg':response_code[201]})
         return Response({'code':405,'msg':response_code[405]})
 
