@@ -21,4 +21,5 @@ response_code = {
     412 : "WRONG_PASSWORD",
     413 : "LOGIN_FIRST",
     414 : "INVALID_OPERATION",
+    415 : "ENTER UPCOMING TIME"
 }
