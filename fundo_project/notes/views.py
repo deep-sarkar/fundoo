@@ -161,12 +161,9 @@ class DisplayNoteView(GenericAPIView):
                 reminder = None
             notes = cache.get(cache_key)
             if notes != None:
-                note = Note.objects.filter(id=instance.id, trash=False, archives=False)
-                for item in notes:
-                    if item.id == id:
-                        notes.exclude(id=id)
-                        notes = notes.union(note)
-                        cache.set(cache_key,notes)
+                cache.delete(cache_key)
+                updated_notes = Note.objects.filter(user=user, trash=False, archives=False)
+                cache.set(cache_key,updated_notes)      
             return Response({'code':202,'msg':response_code[202]})
         return Response({'code':405,'msg':response_code[405]})
 
