@@ -214,9 +214,18 @@ class TrashNoteView(GenericAPIView):
 
     def put(self, request, id=None):
         note = self.get_object(id)
+        user=request.user
+        user_id  = user.id
+        username = user.username
+        cache_key = str(username)+str(user_id)
         serializer = TrashSerializer(note, data=request.data)
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            serializer.save(user=user)
+            note = Note.objects.filter(id=id, trash=False, archives=False)
+            if note.exists():
+                existing_notes = cache.get(cache_key)
+                if existing_notes != None:
+                    cache.set(cache_key, existing_notes.union(note))
             return Response(serializer.data, status=200)
         return Response({'code':405,'msg':response_code[405]})
     
