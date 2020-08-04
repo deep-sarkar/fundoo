@@ -10,8 +10,8 @@ def add_reminders_to_queue(email,data):
     if len(email)!= 0:
         message ={
             "email":str(email),
-            "Title":data.get("title"),
-            "Reminder":data.get("reminder")
+            "title":data.get("title"),
+            "reminder":data.get("reminder")
         }
         username = data.get('user_id')
-        producer.send("fundoo",json.dumps(message).encode('utf-8'))
+        producer.send("reminders",json.dumps(message).encode('utf-8'))
