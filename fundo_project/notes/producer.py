@@ -14,4 +14,4 @@ def add_reminders_to_queue(email,data):
             "Reminder":data.get("reminder")
         }
         username = data.get('user_id')
-        producer.send("notes",json.dumps(message).encode('utf-8'))
+        producer.send("fundoo",json.dumps(message).encode('utf-8'))
