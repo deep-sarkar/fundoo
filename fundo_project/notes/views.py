@@ -158,6 +158,7 @@ class DisplayNoteView(GenericAPIView):
             instance = serializer.save(user=request.user)
             try:
                 reminder = request.data['reminder']
+                validate_time(reminder)
                 add_reminders_to_queue(user_email,serializer.data)
             except KeyError:
                 reminder = None
