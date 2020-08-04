@@ -41,7 +41,8 @@ from .producer import add_reminders_to_queue
 #CACHE
 from django.core.cache import cache
 
-
+#Validator
+from .validator import validate_time
 
 
 
@@ -89,6 +90,7 @@ class CreateNoteView(GenericAPIView):
             instance = serializer.save(user=request.user)
             try:
                 reminder = request.data['reminder']
+                validate_time(reminder)
                 add_reminders_to_queue(user_email,serializer.data)
             except KeyError:
                 reminder = None
