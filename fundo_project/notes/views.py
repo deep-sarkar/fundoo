@@ -27,7 +27,7 @@ import re
 
 #Elastic search
 from .documents import NoteDocument
-
+from elasticsearch_dsl import Q as q
 
 #Django
 from django.shortcuts import render
@@ -384,7 +384,9 @@ def search_by_title(request):
     title = request.GET.get('title')
     notes =[]
     if title:
-        all_notes = NoteDocument.search().query("match",title=title)
+        query = q("match", title=title) | q("match", note=title)
+        search = NoteDocument.search()
+        all_notes = search.query(query)
         for note in all_notes:
             if note.user['username'] == user:
                 notes.append(note)
