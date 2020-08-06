@@ -9,6 +9,7 @@ from .views import (CreateNoteView,
                     ArchivesNoteView,
                     PinNoteView,
                     DisplayNoteByLabelView,
+                    CollaboratedNoteView,
                     search_by_title)
 
 
@@ -23,5 +24,6 @@ urlpatterns = [
     path('archives/', ArchivesNoteView.as_view(), name='archive'),
     path('pinnotes/', PinNoteView.as_view(), name='pin-note'),
     path('display/<label>/', DisplayNoteByLabelView.as_view(), name='display-label-with-note'),
-    path('search/title/', search_by_title)
+    path('search/title/', search_by_title),
+    path('collaborated/', CollaboratedNoteView.as_view(), name='collaborated')
 ]
