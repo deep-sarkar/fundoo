@@ -1,0 +1,14 @@
+<form method="get">
+   Title : <input type="text" id="search" name="title" placeholder="search ...">
+</form>
+
+{% for note in notes %}
+    id       : {{ note.id }}    <br>
+    user     : {{ note.user }}  <br>
+    title    : {{ note.title }} <br>
+    note     : {{ note.note }}  <br>
+    urls     : {{ note.urls }}  <br>
+    <!-- reminder : {{ note.reminder }} <br> -->
+
+    <hr>
+{% endfor %}

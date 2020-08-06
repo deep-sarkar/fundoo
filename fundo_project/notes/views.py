@@ -21,12 +21,29 @@ from .serializers import (NoteSerializer,
 from account.status import response_code
 from .exceptions import DoesNotExistException
 
-#Redis import
-from account import redis
-import pickle
-
 #RE
 import re
+
+
+#Elastic search
+from .documents import NoteDocument
+from elasticsearch_dsl import Q as q
+
+#Django
+from django.shortcuts import render
+
+#Static data
+import static_data
+
+#KAFKA producer
+from .producer import add_reminders_to_queue
+
+#CACHE
+from django.core.cache import cache
+
+#Validator
+from .validator import validate_time
+
 
 
 '''
@@ -42,8 +59,17 @@ class CreateNoteView(GenericAPIView):
     queryset         = Note.objects.all()
 
     def get(self, request):
-        notes      = Note.objects.filter(user=request.user,trash=False, archives=False)
-        paginator  = Paginator(notes,3)
+        user_id  = request.user.id
+        username = request.user.username
+        cache_key = str(username)+str(user_id)
+        notes = cache.get(cache_key)
+        if notes == None:
+            notes = Note.objects.filter(user=request.user,trash=False, archives=False)
+        else:
+            notes = notes.order_by('-pin','-id')
+        if cache.get(cache_key) == None:
+            cache.set(cache_key, notes)
+        paginator  = Paginator(notes,static_data.ITEMS_PER_PAGE)
         page = request.GET.get('page')
         try:
             note_details = paginator.page(page)
@@ -51,14 +77,27 @@ class CreateNoteView(GenericAPIView):
             note_details = paginator.page(1)
         except EmptyPage:
             note_details = paginator.page(paginator.num_pages)
-        serializer = NoteSerializer(note_details, many=True)
+        serializer = NoteSerializer(notes, many=True)
         return Response(serializer.data, status=200)
 
     def post(self, request):
+        user_email = request.user.email
+        user_id  = request.user.id
+        username = request.user.username
+        cache_key = str(username)+str(user_id)
         serializer = NoteSerializer(data=request.data)
         if serializer.is_valid():
             instance = serializer.save(user=request.user)
-            redis.set_attribute(instance.id,pickle.dumps(serializer.data))
+            try:
+                reminder = request.data['reminder']
+                validate_time(reminder)
+                add_reminders_to_queue(user_email,serializer.data)
+            except KeyError:
+                pass
+            note = Note.objects.filter(id=instance.id, trash=False, archives=False)
+            existing_notes = cache.get(cache_key)
+            if existing_notes != None:
+                cache.set(cache_key,existing_notes.union(note))
             return Response({'code':201,'msg':response_code[201]})
         return Response({'code':405,'msg':response_code[405]})
 
@@ -82,20 +121,33 @@ class DisplayNoteView(GenericAPIView):
     serializer_class = SingleNoteSerializer
 
     def get_object(self,id):
+        user = self.request.user
+        user_id  = user.id
+        username = user.username
+        cache_key = str(username)+str(user_id)
+        notes = cache.get(cache_key)
+        if notes != None:
+            for note in notes:
+                if note.id == id and note.trash == False:
+                    return note
         try:
-            user = self.request.user
             note = Note.objects.filter(Q(user=user) & Q(trash=False))
             return note.get(id=id)
         except Note.DoesNotExist:
             raise DoesNotExistException
 
     def get(self, request, id=None):
-            note       = self.get_object(id)
-            serializer = SingleNoteSerializer(note)
-            return Response(serializer.data, status=200)
+        note       = self.get_object(id)
+        serializer = SingleNoteSerializer(note)
+        return Response(serializer.data, status=200)
         
     def put(self, request, id=None):
         note       = self.get_object(id)
+        user = request.user
+        user_id  = user.id
+        username = user.username
+        cache_key = str(username)+str(user_id)
+        user_email = user.email
         try:
             label = request.data['label']
         except KeyError:
@@ -103,7 +155,18 @@ class DisplayNoteView(GenericAPIView):
             request.data.update(label)
         serializer = SingleNoteSerializer(note, data=request.data)
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            instance = serializer.save(user=request.user)
+            try:
+                reminder = request.data['reminder']
+                validate_time(reminder)
+                add_reminders_to_queue(user_email,serializer.data)
+            except KeyError:
+                reminder = None
+            notes = cache.get(cache_key)
+            if notes != None:
+                cache.delete(cache_key)
+                updated_notes = Note.objects.filter(user=user, trash=False, archives=False)
+                cache.set(cache_key,updated_notes)      
             return Response({'code':202,'msg':response_code[202]})
         return Response({'code':405,'msg':response_code[405]})
 
@@ -154,9 +217,18 @@ class TrashNoteView(GenericAPIView):
 
     def put(self, request, id=None):
         note = self.get_object(id)
+        user=request.user
+        user_id  = user.id
+        username = user.username
+        cache_key = str(username)+str(user_id)
         serializer = TrashSerializer(note, data=request.data)
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            serializer.save(user=user)
+            note = Note.objects.filter(id=id, trash=False, archives=False)
+            if note.exists():
+                existing_notes = cache.get(cache_key)
+                if existing_notes != None:
+                    cache.set(cache_key, existing_notes.union(note))
             return Response(serializer.data, status=200)
         return Response({'code':405,'msg':response_code[405]})
     
@@ -301,6 +373,37 @@ class DisplayNoteByLabelView(GenericAPIView):
 
     def get(self, request, label):
         notes = Note.objects.filter(user=request.user, trash=False, label__contains=[str(label)])
+        if notes.count()==0:
+            raise DoesNotExistException
+        serializer = NoteSerializer(notes, many=True)
+        return Response(serializer.data,status=200)
+
+
+def search_by_title(request):
+    user = request.user.username
+    title = request.GET.get('title')
+    notes =[]
+    if title:
+        query = q("match", title=title) | q("match", note=title)
+        search = NoteDocument.search()
+        all_notes = search.query(query)
+        for note in all_notes:
+            if note.user['username'] == user:
+                notes.append(note)
+    return render(request,'notes/search.html',{'notes':notes})
+
+
+
+'''
+class CollaboratedNoteView(GenericAPIView) will display all collaborated notes to logined user if 
+    logined user is in collaboraters list
+'''
+class CollaboratedNoteView(GenericAPIView):
+    serializer_class = NoteSerializer
+    queryset = Note.objects.all()
+
+    def get(self, request):
+        notes = Note.objects.filter(collaborators__in=[request.user], trash=False, archives=False)
         if notes.count()==0:
             raise DoesNotExistException
         serializer = NoteSerializer(notes, many=True)

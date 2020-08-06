@@ -45,11 +45,18 @@ INSTALLED_APPS = [
     'storages',
     'rest_framework_swagger',
     'colorful',
+    'django_elasticsearch_dsl',
 
     #projects
     'account',
     'notes',
 ]
+
+ELASTICSEARCH_DSL = {
+    'default':{
+        'hosts':os.environ['ELASTIC_SEARCH_HOST'],
+    }
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -179,8 +186,6 @@ LOGIN_REQUIRED_URLS = [
 
 #LOGGING
 
-import os
-
 LOGGING ={
     'version': 1,
     'loggers':{
@@ -224,3 +229,15 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ]
 }
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': os.environ['REDIS_LOCATION'],
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+
+CACHE_TTL = 60 * 15
