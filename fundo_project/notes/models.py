@@ -13,7 +13,7 @@ class Label(models.Model):
         return self.label
     
 class Note(models.Model):
-    user      = models.ForeignKey(User, on_delete=models.CASCADE, to_field='username')
+    user      = models.ForeignKey(User, on_delete=models.CASCADE, to_field='username', related_name='NoteUser')
     title     = models.CharField(max_length=25, blank=False , null=False)
     note      = models.TextField(blank=True,null=True)
     urls      = models.URLField(blank=True, null=True)
@@ -24,7 +24,7 @@ class Note(models.Model):
     pin       = models.BooleanField(default=False)
     label     = ArrayField(models.CharField(max_length=120, blank=True, null=True), null=True, blank=True)
     color     = RGBColorField(colors=['#FF0000', '#00FF00', '#0000FF'],default='#b0bfb5')
-
+    collaborators = models.ManyToManyField( User, blank=True)
 
     class Meta:
         ordering=['-pin','-id']
