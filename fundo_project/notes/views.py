@@ -6,7 +6,6 @@ from rest_framework import serializers
 #Django imports
 from django.db.models import Q
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.contrib.auth.models import User
 
 #Model Import
 from .models import Note, Label
@@ -393,6 +392,12 @@ def search_by_title(request):
                 notes.append(note)
     return render(request,'notes/search.html',{'notes':notes})
 
+
+
+'''
+class CollaboratedNoteView(GenericAPIView) will display all collaborated notes to logined user if 
+    logined user is in collaboraters list
+'''
 class CollaboratedNoteView(GenericAPIView):
     serializer_class = NoteSerializer
     queryset = Note.objects.all()
