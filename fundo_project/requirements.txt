@@ -19,14 +19,8 @@ django-admin==2.0.1
 django-background-tasks==1.2.5
 django-colorfield==0.3.2
 django-colorful==1.3
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
 django-compat==1.0.15
->>>>>>> services_and_search
 django-elasticsearch-dsl==7.1.4
->>>>>>> services_and_search
 django-excel-base==1.0.4
 django-excel-response2==3.0.2
 django-logpipe==1.0.0
