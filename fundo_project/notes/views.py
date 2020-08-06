@@ -6,6 +6,7 @@ from rest_framework import serializers
 #Django imports
 from django.db.models import Q
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.contrib.auth.models import User
 
 #Model Import
 from .models import Note, Label
@@ -93,7 +94,7 @@ class CreateNoteView(GenericAPIView):
                 validate_time(reminder)
                 add_reminders_to_queue(user_email,serializer.data)
             except KeyError:
-                reminder = None
+                pass
             note = Note.objects.filter(id=instance.id, trash=False, archives=False)
             existing_notes = cache.get(cache_key)
             if existing_notes != None:
@@ -391,3 +392,14 @@ def search_by_title(request):
             if note.user['username'] == user:
                 notes.append(note)
     return render(request,'notes/search.html',{'notes':notes})
+
+class CollaboratedNoteView(GenericAPIView):
+    serializer_class = NoteSerializer
+    queryset = Note.objects.all()
+
+    def get(self, request):
+        notes = Note.objects.filter(collaborators__in=[request.user], trash=False, archives=False)
+        if notes.count()==0:
+            raise DoesNotExistException
+        serializer = NoteSerializer(notes, many=True)
+        return Response(serializer.data,status=200)
