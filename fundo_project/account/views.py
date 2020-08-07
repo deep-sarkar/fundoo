@@ -272,6 +272,7 @@ def reset_new_password(request,surl):
     username = decode['username']
     user = User.objects.get(username=username)
     return redirect( os.environ['PASSWORD_RESET_REDIRECT'] + str(user)+'/')
+
    
 class ActivateNewPassword(GenericAPIView):
     serializer_class = ResetPasswordSerializer
