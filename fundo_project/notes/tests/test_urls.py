@@ -41,3 +41,7 @@ class TestUrls:
     def test_DisplayNoteByLabelView_url(self):
         path = reverse('display-label-with-note', kwargs={'label':'hello'})
         assert resolve(path).view_name == 'display-label-with-note'
+
+    def test_view_collaborated_notes_url(self):
+        path = reverse('collaborated')
+        assert resolve(path).view_name == 'collaborated'
