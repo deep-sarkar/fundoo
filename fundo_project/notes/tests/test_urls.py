@@ -9,3 +9,7 @@ class TestUrls:
     def test_open_note_url(self):
         path = reverse('open-notes', kwargs={'id':2})
         assert resolve(path).view_name == 'open-notes'
+
+    def test_create_label_url(self):
+        path = reverse('create-label')
+        assert resolve(path).view_name == 'create-label'
