@@ -34,6 +34,10 @@ class TestUrls:
         path = reverse('archive')
         assert resolve(path).view_name == 'archive'
     
-    def test_view_all_pi_notes_url(self):
+    def test_view_all_pin_notes_url(self):
         path = reverse('pin-note')
         assert resolve(path).view_name == 'pin-note'
+
+    def test_DisplayNoteByLabelView_url(self):
+        path = reverse('display-label-with-note', kwargs={'label':'hello'})
+        assert resolve(path).view_name == 'display-label-with-note'
