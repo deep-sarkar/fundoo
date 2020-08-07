@@ -33,3 +33,7 @@ class TestUrls:
     def test_view_all_archives_url(self):
         path = reverse('archive')
         assert resolve(path).view_name == 'archive'
+    
+    def test_view_all_pi_notes_url(self):
+        path = reverse('pin-note')
+        assert resolve(path).view_name == 'pin-note'
