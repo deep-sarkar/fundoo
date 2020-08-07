@@ -21,3 +21,7 @@ class TestUrls:
     def test_open_trash_url(self):
         path = reverse('all-trashed-notes')
         assert resolve(path).view_name == 'all-trashed-notes'
+
+    def test_open_trash_url(self):
+        path = reverse('single-trash-note', kwargs={'id':3})
+        assert resolve(path).view_name == 'single-trash-note'
