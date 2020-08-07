@@ -62,6 +62,8 @@ from django.core.cache import cache
 
 #Static data
 import static_data
+import os
+
 
 #Home
 class Home(TemplateView):
@@ -269,7 +271,7 @@ def reset_new_password(request,surl):
         return Response({'code':304,'msg':response_code[304]})
     username = decode['username']
     user = User.objects.get(username=username)
-    return redirect('http://127.0.0.1:8000/account/activate_new_password/' + str(user)+'/')
+    return redirect( os.environ['PASSWORD_RESET_REDIRECT'] + str(user)+'/')
    
 class ActivateNewPassword(GenericAPIView):
     serializer_class = ResetPasswordSerializer
