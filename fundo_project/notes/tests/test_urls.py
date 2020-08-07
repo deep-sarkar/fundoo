@@ -29,3 +29,7 @@ class TestUrls:
     def test_view_all_reminders_url(self):
         path = reverse('reminder')
         assert resolve(path).view_name == 'reminder'
+
+    def test_view_all_archives_url(self):
+        path = reverse('archive')
+        assert resolve(path).view_name == 'archive'
