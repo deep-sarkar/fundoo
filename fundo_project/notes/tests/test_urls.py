@@ -17,3 +17,7 @@ class TestUrls:
     def test_open_label_url(self):
         path = reverse('open-label', kwargs={'id':2})
         assert resolve(path).view_name == 'open-label'
+
+    def test_open_trash_url(self):
+        path = reverse('all-trashed-notes')
+        assert resolve(path).view_name == 'all-trashed-notes'
