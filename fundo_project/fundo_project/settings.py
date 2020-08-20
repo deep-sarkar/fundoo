@@ -27,6 +27,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+CORS_ORIGIN_WHITELIST = (
+    'http://127.0.0.1:4200',
+    'http://127.0.0.1:8080',
+    'http://localhost:4200',
+    'http://localhost:8080',
+)
 
 # Application definition
 
@@ -46,6 +52,7 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
     'colorful',
     'django_elasticsearch_dsl',
+    'corsheaders',
 
     #projects
     'account',
@@ -61,6 +68,7 @@ ELASTICSEARCH_DSL = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
