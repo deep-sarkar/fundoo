@@ -53,6 +53,8 @@ from .validate import (validate_password_match,
 
 import jwt
 
+from rest_framework_jwt.settings import api_settings
+
 #User model
 User = get_user_model()
 
@@ -64,6 +66,8 @@ from django.core.cache import cache
 import static_data
 import os
 
+jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 
 #Home
 class Home(TemplateView):
@@ -158,12 +162,10 @@ class LoginAPIView(GenericAPIView):
         if user_obj is not None:
             if user_obj.is_active:
                 login(request,user_obj)
-                payload = {
-                    'username':username
-                }
-                token = generate_token(payload)
+                payload = jwt_payload_handler(user_obj)
+                token = jwt_encode_handler(payload)
                 redis.set_attribute(username,token)
-                return Response({'code':200,'msg':response_code[200]})
+                return Response({'code':200,'msg':response_code[200],'token':token})
             return Response({'code':411,'msg':response_code[411]})
         return Response({'code':412,'msg':response_code[412]})
 
@@ -183,6 +185,8 @@ class ResetPasswordView(GenericAPIView):
     serializer_class = ResetPasswordSerializer
 
     def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return Response({'code':413, 'msg':response_code[413]})
         username         = self.request.user.username
         password         = request.data.get('password')
         confirm_password = request.data.get('confirm_password')
