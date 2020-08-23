@@ -23,7 +23,10 @@ from fundo_project.settings import EMAIL_HOST_USER
 from .status import response_code
 
 #import from serializers
-from .serializers import RegistrationSerializer, LoginSerializer, ResetPasswordSerializer, ForgotPasswordSerializer
+from .serializers import (RegistrationSerializer, 
+                          LoginSerializer, 
+                          ResetPasswordSerializer, 
+                          ForgotPasswordSerializer)
 
 #token
 from .jwt_token import generate_token
@@ -268,23 +271,42 @@ class ForgotPasswordView(GenericAPIView):
         except SMTPException:
             return Response({'code':301,'msg':response_code[301]})
 
+class CheckUserExistance(GenericAPIView):
+    serializer_class = LoginSerializer
 
-def reset_new_password(request,surl):
-    token_obj = ShortURL.objects.get(surl=surl)
-    token = token_obj.lurl
-    try:
-        decode = jwt.decode(token,'SECRET_KEY')
-    except jwt.DecodeError:
-        return Response({'code':304,'msg':response_code[304]})
-    username = decode['username']
-    user = User.objects.get(username=username)
-    return redirect( os.environ['PASSWORD_RESET_REDIRECT'] + str(user)+'/')
+    def get(self, request, surl):
+        try:
+            token_obj = ShortURL.objects.get(surl=surl)
+        except Exception:
+            return Response({'code':409,'msg':response_code[409]})
+        token = token_obj.lurl
+        try:
+            decode = jwt.decode(token,'SECRET_KEY')
+        except jwt.DecodeError:
+            return Response({'code':304,'msg':response_code[304]})
+        username = decode['username']
+        user = User.objects.get(username=username)
+        if user is not None:
+            return Response({'code':203,'msg':response_code[203]})
+        else:
+            return Response({'code':306,'msg':response_code[306]})
 
    
-class ActivateNewPassword(GenericAPIView):
+class ResetNewPassword(GenericAPIView):
     serializer_class = ResetPasswordSerializer
 
-    def post(self, request, user_reset):
+    def post(self, request):
+        surl= request.data.get('surl')
+        try:
+            token_obj = ShortURL.objects.get(surl=surl)
+        except Exception:
+            return Response({'code':409,'msg':response_code[409]})
+        token = token_obj.lurl
+        try:
+            decode = jwt.decode(token,'SECRET_KEY')
+        except jwt.DecodeError:
+            return Response({'code':304,'msg':response_code[304]})
+        username = decode['username']
         password         = request.data.get('password')
         confirm_password = request.data.get('confirm_password')
         try:
@@ -294,8 +316,10 @@ class ActivateNewPassword(GenericAPIView):
             return Response({"code":e.code,"msg":e.msg})
         except PasswordPatternMatchError as e:
             return Response({"code":e.code,"msg":e.msg})
-        user = User.objects.get(username__exact=user_reset)
-        user.set_password(password)
-        user.save()
-        return Response({'code':200,'msg':response_code[200]})
+        user = User.objects.get(username__exact=username)
+        if user is not None:
+            user.set_password(password)
+            user.save()
+            return Response({'code':200,'msg':response_code[200]})
+        return Response({'code':409,'msg':response_code[409]})
         
