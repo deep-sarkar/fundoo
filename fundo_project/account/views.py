@@ -209,7 +209,10 @@ class ActivateAccount(GenericAPIView):
     serializer_class = LoginSerializer
 
     def get(self, request, surl):
-        token_obj = ShortURL.objects.get(surl=surl)
+        try:
+            token_obj = ShortURL.objects.get(surl=surl)
+        except Exception:
+            return Response({'code':409,'msg':response_code[409]})
         token     = token_obj.lurl
         try:
             decode    = jwt.decode(token, 'SECRET_KEY')
