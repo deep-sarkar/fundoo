@@ -4,3 +4,4 @@ __pycache__
 abc.txt
 fundo_project/logs
 notes/migrations/*
+.env
