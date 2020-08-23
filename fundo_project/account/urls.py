@@ -5,8 +5,8 @@ from .views import(Registration,
                     ResetPasswordView, 
                     ActivateAccount, 
                     ForgotPasswordView,
-                    reset_new_password,
-                    ActivateNewPassword,
+                    CheckUserExistance,
+                    ResetNewPassword,
                     Home
                     ) 
 
@@ -18,6 +18,6 @@ urlpatterns = [
     path('change_password/',ResetPasswordView.as_view(), name='change_password'),
     path('activate/<surl>/', ActivateAccount.as_view(), name='activate'),
     path('forgot_password/',ForgotPasswordView.as_view(), name='forgot_password'),
-    path('reset_new_password/<surl>/',reset_new_password, name='reset_new_password'),
-    path('activate_new_password/<user_reset>/', ActivateNewPassword.as_view(), name='activate_new_password'),
+    path('check_user/<surl>/',CheckUserExistance.as_view(), name='checkUserExistance'),
+    path('reset_paassword/', ResetNewPassword.as_view(), name='reset_new_password'),
 ]
