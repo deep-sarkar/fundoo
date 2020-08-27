@@ -176,6 +176,8 @@ class Logout(GenericAPIView):
     serializer_class = LoginSerializer
 
     def get(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return Response({'code':413, 'msg':response_code[413]})
         username = request.user.username
         user_id  = request.user.id
         cache_key = str(username)+str(user_id)
