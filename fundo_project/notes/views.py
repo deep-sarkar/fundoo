@@ -78,13 +78,16 @@ class CreateNoteView(GenericAPIView):
         except EmptyPage:
             note_details = paginator.page(paginator.num_pages)
         serializer = NoteSerializer(notes, many=True)
-        return Response(serializer.data, status=200)
+        return Response({"data":serializer.data,"code":200 ,"msg":response_code[200]})
 
     def post(self, request):
         user_email = request.user.email
         user_id  = request.user.id
         username = request.user.username
         cache_key = str(username)+str(user_id)
+        collaborators = request.data.get('collaborators')
+        if collaborators == None:
+            request.data['collaborators'] = []
         serializer = NoteSerializer(data=request.data)
         if serializer.is_valid():
             instance = serializer.save(user=request.user)
