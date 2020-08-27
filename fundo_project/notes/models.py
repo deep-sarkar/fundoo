@@ -23,7 +23,7 @@ class Note(models.Model):
     trash     = models.BooleanField(default=False)
     pin       = models.BooleanField(default=False)
     label     = ArrayField(models.CharField(max_length=120, blank=True, null=True), null=True, blank=True)
-    color     = RGBColorField(colors=['#FF0000', '#00FF00', '#0000FF'],default='#b0bfb5')
+    color     = RGBColorField(colors=['#FF0000', '#00FF00', '#0000FF'],default='#fff')
     collaborators = models.ManyToManyField( User, blank=True)
 
     class Meta:
