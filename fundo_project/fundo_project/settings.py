@@ -90,7 +90,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
     #Custom middleware
-    'account.middleware.LoginRequiredMiddleware',
+    # 'account.middleware.LoginRequiredMiddleware',
 ]
 
 ROOT_URLCONF = 'fundo_project.urls'
