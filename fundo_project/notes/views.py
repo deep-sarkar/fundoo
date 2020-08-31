@@ -19,7 +19,7 @@ from .serializers import (NoteSerializer,
 
 #Custom response and exception import
 from account.status import response_code
-from .exceptions import DoesNotExistException
+from .exceptions import DoesNotExistException, PassedTimeException
 
 #RE
 import re
@@ -97,6 +97,8 @@ class CreateNoteView(GenericAPIView):
                 add_reminders_to_queue(user_email,serializer.data)
             except KeyError:
                 pass
+            except PassedTimeException as e:
+                return Response({'code':e.status_code,'msg':e.detail})
             note = Note.objects.filter(id=instance.id, trash=False, archives=False)
             existing_notes = cache.get(cache_key)
             if existing_notes != None:
@@ -165,6 +167,8 @@ class DisplayNoteView(GenericAPIView):
                 add_reminders_to_queue(user_email,serializer.data)
             except KeyError:
                 reminder = None
+            except PassedTimeException as e:
+                return Response({'code':e.status_code,'msg':e.detail})
             notes = cache.get(cache_key)
             if notes != None:
                 cache.delete(cache_key)
