@@ -86,6 +86,9 @@ class CreateNoteView(GenericAPIView):
         username = request.user.username
         cache_key = str(username)+str(user_id)
         collaborators = request.data.get('collaborators')
+        label = request.data.get('label')
+        if label == None:
+            request.data['label'] = []
         if collaborators == None:
             request.data['collaborators'] = []
         serializer = NoteSerializer(data=request.data)
@@ -144,7 +147,7 @@ class DisplayNoteView(GenericAPIView):
     def get(self, request, id=None):
         note       = self.get_object(id)
         serializer = SingleNoteSerializer(note)
-        return Response(serializer.data, status=200)
+        return Response({"data":serializer.data, "code":200, "msg":response_code[200]})
         
     def put(self, request, id=None):
         note       = self.get_object(id)
@@ -158,6 +161,9 @@ class DisplayNoteView(GenericAPIView):
         except KeyError:
             label = {"label":[]}
             request.data.update(label)
+        collaborators = request.data.get('collaborators')
+        if collaborators == None:
+            request.data['collaborators'] = []
         serializer = SingleNoteSerializer(note, data=request.data)
         if serializer.is_valid():
             instance = serializer.save(user=request.user)
