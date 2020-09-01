@@ -18,12 +18,12 @@ class Note(models.Model):
     note      = models.TextField(blank=True,null=True)
     urls      = models.URLField(blank=True, null=True)
     image     = models.ImageField(upload_to = 'static/images',max_length=255, null=True, blank=True)
-    reminder  = models.TimeField(auto_now_add=False,auto_now=False, null=True)
+    reminder  = models.TimeField(auto_now_add=False, auto_now=False, null=True)
     archives  = models.BooleanField(default=False)
     trash     = models.BooleanField(default=False)
     pin       = models.BooleanField(default=False)
     label     = ArrayField(models.CharField(max_length=120, blank=True, null=True), null=True, blank=True)
-    color     = RGBColorField(colors=['#FF0000', '#00FF00', '#0000FF'],default='#fff')
+    color     = RGBColorField(default='#ffffff')
     collaborators = models.ManyToManyField( User, blank=True)
 
     class Meta:
