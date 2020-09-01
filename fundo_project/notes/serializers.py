@@ -36,7 +36,7 @@ class SingleNoteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model            = Note
-        fields           = ['user','title','note','urls','image','reminder','archives','trash','pin','label','collaborators']
+        fields           = ['user','title','note','urls','color','image','reminder','archives','trash','pin','label','collaborators']
         read_only_fields = ['id','user']
 
     def update(self, instance, validated_data):
@@ -45,6 +45,7 @@ class SingleNoteSerializer(serializers.ModelSerializer):
         collaborators = validated_data.pop('collaborators')
         instance.title         = validated_data.get("title", instance.title)
         instance.note          = validated_data.get("note", instance.note)
+        instance.color         = validated_data.get("color", instance.color)
         instance.urls          = validated_data.get("urls", instance.urls)
         instance.image         = validated_data.get("image", instance.image)
         instance.reminder      = validated_data.get("reminder", instance.reminder)
