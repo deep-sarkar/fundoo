@@ -268,7 +268,7 @@ class CreateLabelView(GenericAPIView):
     def get(self, request):
         labels     = Label.objects.filter(label_id=request.user)
         serializer = LabelSerializer(labels, many=True)
-        return Response(serializer.data, status=200)
+        return Response({"data":serializer.data, "code":200,"msg":response_code[200]})
 
     def post(self, request):
         serializer = LabelSerializer(data=request.data)
@@ -318,16 +318,18 @@ class DisplayLabelView(GenericAPIView):
 
     def delete(self, request, id=None):
         label = self.get_object(id)
-        notes = Note.objects.filter(user=request.user,label__contains=label)
+        print(label)
         try:
+            notes = Note.objects.filter(user=request.user,label__contains=label)
             for note in notes:
                 labels = note.label
                 labels.remove(str(label))
                 note.save()
             label.delete()
-        except ValueError:
-            raise DoesNotExistException
+        except Exception:
+            label.delete()
         return Response({'code':200,'msg':response_code[200]})
+
 
 
 
