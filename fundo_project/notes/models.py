@@ -17,7 +17,7 @@ class Label(models.Model):
     
 class Note(models.Model):
     user      = models.ForeignKey(User, on_delete=models.CASCADE, to_field='username', related_name='NoteUser')
-    title     = models.CharField(max_length=25, blank=False , null=False)
+    title     = models.CharField(max_length=25, blank=True , null=True)
     note      = models.TextField(blank=True,null=True)
     urls      = models.URLField(blank=True, null=True)
     image     = models.ImageField(upload_to = 'static/images',max_length=255, null=True, blank=True)
