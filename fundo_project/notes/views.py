@@ -151,6 +151,7 @@ class DisplayNoteView(GenericAPIView):
         
     def put(self, request, id=None):
         note       = self.get_object(id)
+        serializer = SingleNoteSerializer(note)
         user = request.user
         user_id  = user.id
         username = user.username
@@ -159,11 +160,11 @@ class DisplayNoteView(GenericAPIView):
         try:
             label = request.data['label']
         except KeyError:
-            label = {"label":[]}
+            label = {"label":serializer.data['label']}
             request.data.update(label)
         collaborators = request.data.get('collaborators')
         if collaborators == None:
-            request.data['collaborators'] = []
+            request.data['collaborators'] = serializer.data['collaborators']
         serializer = SingleNoteSerializer(note, data=request.data)
         if serializer.is_valid():
             instance = serializer.save(user=request.user)
@@ -318,7 +319,6 @@ class DisplayLabelView(GenericAPIView):
 
     def delete(self, request, id=None):
         label = self.get_object(id)
-        print(label)
         try:
             notes = Note.objects.filter(user=request.user,label__contains=label)
             for note in notes:
