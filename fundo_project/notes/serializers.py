@@ -62,11 +62,12 @@ class SingleNoteSerializer(serializers.ModelSerializer):
 class TrashSerializer(serializers.ModelSerializer):
     class Meta:
         model  = Note
-        fields = ['id','title','trash']
+        fields = ['id','title','note','trash']
         read_only_fields = ['id','title']
 
 class ReminderSerializer(serializers.ModelSerializer):
+    reminder = serializers.TimeField(format="%H:%M", required=False)
     class Meta:
         model  = Note
-        fields = ['id','title','reminder']
+        fields = "__all__"
         read_only_fields = ['id','title']
