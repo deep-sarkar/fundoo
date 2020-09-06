@@ -385,7 +385,7 @@ class DisplayNoteByLabelView(GenericAPIView):
     def get(self, request, label):
         notes = Note.objects.filter(user=request.user, trash=False, label__contains=[str(label)])
         if notes.count()==0:
-            raise DoesNotExistException
+            return Response({'code':409,'msg':response_code[409]})
         serializer = NoteSerializer(notes, many=True)
         return Response(serializer.data,status=200)
 
@@ -416,6 +416,6 @@ class CollaboratedNoteView(GenericAPIView):
     def get(self, request):
         notes = Note.objects.filter(collaborators__in=[request.user], trash=False, archives=False)
         if notes.count()==0:
-            raise DoesNotExistException
+            return Response({'code':409,'msg':response_code[409]})
         serializer = NoteSerializer(notes, many=True)
         return Response({"data":serializer.data, "code":200, "msg":response_code[200]})
