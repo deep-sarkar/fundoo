@@ -139,7 +139,7 @@ class DisplayNoteView(GenericAPIView):
                 if note.id == id and note.trash == False:
                     return note
         try:
-            note = Note.objects.filter(Q(user=user) & Q(trash=False))
+            note = Note.objects.filter(Q(user=user))
             return note.get(id=id)
         except Note.DoesNotExist:
             raise DoesNotExistException
@@ -202,7 +202,7 @@ class AllTrashedNotesView(GenericAPIView):
         user = self.request.user
         note = Note.objects.filter(Q(user=user) & Q(trash=True))
         serializer = TrashSerializer(note, many=True)
-        return Response(serializer.data, status=200)
+        return Response({"data":serializer.data, "code":200, "msg":response_code[200]})
 
 
 
@@ -331,10 +331,6 @@ class DisplayLabelView(GenericAPIView):
         return Response({'code':200,'msg':response_code[200]})
 
 
-
-
-
-
 '''
 class ReminderView(GenericAPIView) have one method which will get and display reminder for login user
 '''
@@ -346,7 +342,7 @@ class ReminderView(GenericAPIView):
         user        = request.user
         reminder    = Note.objects.filter(Q(user=user) & Q(trash=False)).exclude(reminder=None)
         serializer  = ReminderSerializer(reminder, many=True)
-        return Response(serializer.data,status=200)
+        return Response({"data":serializer.data, "code":200, "msg":response_code[200]})
 
 
 
@@ -361,7 +357,7 @@ class ArchivesNoteView(GenericAPIView):
         user        = request.user
         archives    = Note.objects.filter(user=user, trash=False, archives=True)
         serializer  = NoteSerializer(archives, many=True)
-        return Response(serializer.data,status=200)
+        return Response({"data":serializer.data, "code":200, "msg":response_code[200]})
 
 
 '''
@@ -375,7 +371,7 @@ class PinNoteView(GenericAPIView):
         user        = request.user
         archives    = Note.objects.filter(user=user, trash=False, pin=True)
         serializer  = NoteSerializer(archives, many=True)
-        return Response(serializer.data,status=200)
+        return Response({"data":serializer.data, "code":200, "msg":response_code[200]})
 
 
 '''
@@ -422,4 +418,4 @@ class CollaboratedNoteView(GenericAPIView):
         if notes.count()==0:
             raise DoesNotExistException
         serializer = NoteSerializer(notes, many=True)
-        return Response(serializer.data,status=200)
+        return Response({"data":serializer.data, "code":200, "msg":response_code[200]})
