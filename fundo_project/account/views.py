@@ -325,3 +325,15 @@ class ResetNewPassword(GenericAPIView):
             return Response({'code':200,'msg':response_code[200]})
         return Response({'code':409,'msg':response_code[409]})
         
+class GetAllUserView(GenericAPIView):
+    serializer_class = RegistrationSerializer
+    queryset         = User.objects.all()
+
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return Response({'code':413, 'msg':response_code[413]})
+        user = User.objects.all().exclude(username=request.user.username)
+        print(user)
+        allUser = RegistrationSerializer(user, many=True)
+        print(allUser)
+        return Response({"data":allUser.data, "code":200, "msg":response_code[200]})
