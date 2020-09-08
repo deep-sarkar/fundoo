@@ -7,7 +7,8 @@ from .views import(Registration,
                     ForgotPasswordView,
                     CheckUserExistance,
                     ResetNewPassword,
-                    Home
+                    Home,
+                    GetAllUserView
                     ) 
 
 urlpatterns = [
@@ -20,4 +21,5 @@ urlpatterns = [
     path('forgot_password/',ForgotPasswordView.as_view(), name='forgot_password'),
     path('check_user/<surl>/',CheckUserExistance.as_view(), name='checkUserExistance'),
     path('reset_paassword/', ResetNewPassword.as_view(), name='reset_new_password'),
+    path('all_users/', GetAllUserView.as_view(), name="all_users")
 ]
