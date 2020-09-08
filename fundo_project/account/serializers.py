@@ -13,6 +13,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
+            'id',
             'first_name',
             'last_name',
             'username',
@@ -22,6 +23,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
             ]
         extra_kwargs = {'password':{'write_only':True}}
         required_fields = ['username','email','password','confirm_password']
+        read_only_fields = ["id"]
 
 class LoginSerializer(serializers.ModelSerializer):
     password        = serializers.CharField(style={'input_type': 'password'}, write_only=True)
