@@ -64,7 +64,7 @@ class CreateNoteView(GenericAPIView):
         cache_key = str(username)+str(user_id)
         notes = cache.get(cache_key)
         if notes == None:
-            notes = Note.objects.filter(user=request.user,trash=False, archives=False)
+            notes = Note.objects.filter(user=request.user, collaborators__in=[request.user], trash=False, archives=False)
         else:
             notes = notes.order_by('-pin','-id')
         if cache.get(cache_key) == None:
