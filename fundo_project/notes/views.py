@@ -44,6 +44,7 @@ from django.core.cache import cache
 #Validator
 from .validator import validate_time
 
+from itertools import chain
 
 
 '''
@@ -63,11 +64,11 @@ class CreateNoteView(GenericAPIView):
         username = request.user.username
         cache_key = str(username)+str(user_id)
         notes = cache.get(cache_key)
+        notes = None
         if notes == None:
-            notes = Note.objects.filter(user=request.user, trash=False, archives=False)
+            note = Note.objects.filter(user=request.user, trash=False, archives=False)
             colNotes = Note.objects.filter(collaborators__in=[request.user], trash=False, archives=False)
-            if colNotes != None:
-                notes.union(colNotes)
+            notes = list(chain(note, colNotes))
         else:
             notes = notes.order_by('-pin','-id')
         if cache.get(cache_key) == None:
@@ -88,12 +89,12 @@ class CreateNoteView(GenericAPIView):
         user_id  = request.user.id
         username = request.user.username
         cache_key = str(username)+str(user_id)
-        collaborators = request.data.get('collaborators')
-        label = request.data.get('label')
-        if label == None:
-            request.data['label'] = []
-        if collaborators == None:
-            request.data['collaborators'] = []
+        # collaborators = request.data.get('collaborators')
+        # label = request.data.get('label')
+        # if label == None:
+        #     request.data['label'] = []
+        # if collaborators == None:
+        #     request.data['collaborators'] = []
         serializer = NoteSerializer(data=request.data)
         if serializer.is_valid():
             instance = serializer.save(user=request.user)
@@ -142,7 +143,7 @@ class DisplayNoteView(GenericAPIView):
                 if note.id == id and note.trash == False:
                     return note
         try:
-            note = Note.objects.filter(Q(user=user))
+            note = Note.objects.filter(Q(user=user) | Q(collaborators__in=[user]))
             return note.get(id=id)
         except Note.DoesNotExist:
             raise DoesNotExistException
