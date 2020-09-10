@@ -24,7 +24,7 @@ def validate_password_pattern_match(password):
 
 def validate_duplicat_username_existance(username):
     if User.objects.filter(username=username).exists():
-        raise UsernameAlreadyExistsError(code=407,msg=response_code[407])
+        raise UsernameAlreadyExistsError(code=401,msg=response_code[401])
 
 def validate_duplicate_email_existance(email):
     if User.objects.filter(email=email).exists():
