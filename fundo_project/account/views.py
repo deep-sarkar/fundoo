@@ -332,6 +332,6 @@ class GetAllUserView(GenericAPIView):
     def get(self, request):
         if not request.user.is_authenticated:
             return Response({'code':413, 'msg':response_code[413]})
-        user = User.objects.all().exclude(username=request.user.username)
+        user = User.objects.all()
         allUser = RegistrationSerializer(user, many=True)
         return Response({"data":allUser.data, "code":200, "msg":response_code[200]})
