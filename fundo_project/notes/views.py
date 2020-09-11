@@ -143,7 +143,9 @@ class DisplayNoteView(GenericAPIView):
                 if note.id == id and note.trash == False:
                     return note
         try:
-            note = Note.objects.filter(Q(user=user) | Q(collaborators__in=[user]))
+            note = Note.objects.filter(user=user)
+            colabNote = Note.objects.filter(collaborators__in=[user])
+            note.union(colabNote)
             return note.get(id=id)
         except Note.DoesNotExist:
             raise DoesNotExistException
