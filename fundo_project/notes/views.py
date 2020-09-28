@@ -89,12 +89,6 @@ class CreateNoteView(GenericAPIView):
         user_id  = request.user.id
         username = request.user.username
         cache_key = str(username)+str(user_id)
-        # collaborators = request.data.get('collaborators')
-        # label = request.data.get('label')
-        # if label == None:
-        #     request.data['label'] = []
-        # if collaborators == None:
-        #     request.data['collaborators'] = []
         serializer = NoteSerializer(data=request.data)
         if serializer.is_valid():
             instance = serializer.save(user=request.user)
