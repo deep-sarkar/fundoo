@@ -7,16 +7,18 @@ from time import sleep
 import smtplib
 from apscheduler.schedulers.background import BackgroundScheduler
 
-clint = os.environ['KAFKA_CLINT']
+client = os.environ['KAFKA_CLIENT']
 scheduler = BackgroundScheduler()
 scheduler.start()
 
+server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
+EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
+server.login(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
+
+consumer = KafkaConsumer('reminders', bootstrap_servers=client)
 
 def send_mail(data):
-    server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
-    EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
-    EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
-    server.login(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
     subject = "You have remiinder at {}".format(data['reminder'])
     body    = data['title']
     message = 'Subject: {}\n\n{}'.format(subject, data['title'])
@@ -27,7 +29,6 @@ def send_mail(data):
 
 
 def kafka_consumer():
-    consumer = KafkaConsumer('reminders', bootstrap_servers=clint)
     job_id = 0
     for task in consumer:
         new_task = task.value
