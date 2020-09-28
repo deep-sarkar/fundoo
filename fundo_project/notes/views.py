@@ -63,16 +63,10 @@ class CreateNoteView(GenericAPIView):
         user_id  = request.user.id
         username = request.user.username
         cache_key = str(username)+str(user_id)
-        notes = cache.get(cache_key)
-        notes = None
-        if notes == None:
-            note = Note.objects.filter(user=request.user, trash=False, archives=False)
-            colNotes = Note.objects.filter(collaborators__in=[request.user], trash=False, archives=False)
-            notes = list(chain(note, colNotes))
-        else:
-            notes = notes.order_by('-pin','-id')
-        if cache.get(cache_key) == None:
-            cache.set(cache_key, notes)
+        note = Note.objects.filter(user=request.user, trash=False, archives=False)
+        colNotes = Note.objects.filter(collaborators__in=[request.user], trash=False, archives=False)
+        notes = list(chain(note, colNotes))
+        cache.set(cache_key, notes)
         paginator  = Paginator(notes,static_data.ITEMS_PER_PAGE)
         page = request.GET.get('page')
         try:
@@ -101,9 +95,6 @@ class CreateNoteView(GenericAPIView):
             except PassedTimeException as e:
                 return Response({'code':e.status_code,'msg':e.detail})
             note = Note.objects.filter(id=instance.id, trash=False, archives=False)
-            existing_notes = cache.get(cache_key)
-            if existing_notes != None:
-                cache.set(cache_key,existing_notes.union(note))
             return Response({'code':201,'msg':response_code[201]})
         return Response({'code':405,'msg':response_code[405]})
 
