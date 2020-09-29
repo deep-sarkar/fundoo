@@ -60,8 +60,11 @@ class CreateNoteView(GenericAPIView):
     queryset         = Note.objects.all()
 
     def get(self, request):
-        user_id  = request.user.id
-        username = request.user.username
+        try:
+            user_id  = request.user.id
+            username = request.user.username
+        except Exception:
+            return Response({"code":416 ,"msg":response_code[416]})
         cache_key = str(username)+str(user_id)
         note = Note.objects.filter(user=request.user, trash=False, archives=False)
         colNotes = Note.objects.filter(collaborators__in=[request.user], trash=False, archives=False)
@@ -79,9 +82,12 @@ class CreateNoteView(GenericAPIView):
         return Response({"data":serializer.data,"code":200 ,"msg":response_code[200]})
 
     def post(self, request):
-        user_email = request.user.email
-        user_id  = request.user.id
-        username = request.user.username
+        try:
+            user_email = request.user.email
+            user_id  = request.user.id
+            username = request.user.username
+        except Exception:
+            return Response({"code":416 ,"msg":response_code[416]})
         cache_key = str(username)+str(user_id)
         serializer = NoteSerializer(data=request.data)
         if serializer.is_valid():
@@ -118,9 +124,12 @@ class DisplayNoteView(GenericAPIView):
     serializer_class = SingleNoteSerializer
 
     def get_object(self,id):
-        user = self.request.user
-        user_id  = user.id
-        username = user.username
+        try:
+            user = self.request.user
+            user_id  = user.id
+            username = user.username
+        except Exception:
+            return Response({"code":416 ,"msg":response_code[416]})
         cache_key = str(username)+str(user_id)
         notes = cache.get(cache_key)
         if notes != None:
@@ -143,9 +152,12 @@ class DisplayNoteView(GenericAPIView):
     def put(self, request, id=None):
         note       = self.get_object(id)
         serializer = SingleNoteSerializer(note)
-        user = request.user
-        user_id  = user.id
-        username = user.username
+        try:
+            user = request.user
+            user_id  = user.id
+            username = user.username
+        except Exception:
+            return Response({"code":416 ,"msg":response_code[416]})
         cache_key = str(username)+str(user_id)
         user_email = user.email
         try:
@@ -190,7 +202,10 @@ class AllTrashedNotesView(GenericAPIView):
     queryset         = Note.objects.all()
 
     def get(self, request):
-        user = self.request.user
+        try:
+            user = self.request.user
+        except Exception:
+            return Response({"code":416 ,"msg":response_code[416]})
         note = Note.objects.filter(Q(user=user) & Q(trash=True))
         serializer = TrashSerializer(note, many=True)
         return Response({"data":serializer.data, "code":200, "msg":response_code[200]})
@@ -222,9 +237,12 @@ class TrashNoteView(GenericAPIView):
 
     def put(self, request, id=None):
         note = self.get_object(id)
-        user=request.user
-        user_id  = user.id
-        username = user.username
+        try:
+            user=request.user
+            user_id  = user.id
+            username = user.username
+        except:
+            return Response({"code":416 ,"msg":response_code[416]})
         cache_key = str(username)+str(user_id)
         serializer = TrashSerializer(note, data=request.data)
         if serializer.is_valid():
@@ -330,7 +348,10 @@ class ReminderView(GenericAPIView):
     queryset = Note.objects.all()
     
     def get(self,request):
-        user        = request.user
+        try:
+            user        = request.user
+        except Exception:
+            return Response({"code":416 ,"msg":response_code[416]})
         reminder    = Note.objects.filter(Q(user=user) & Q(trash=False)).exclude(reminder=None)
         serializer  = ReminderSerializer(reminder, many=True)
         return Response({"data":serializer.data, "code":200, "msg":response_code[200]})
@@ -345,7 +366,10 @@ class ArchivesNoteView(GenericAPIView):
     queryset    = Note.objects.all()
 
     def get(self, request):
-        user        = request.user
+        try:
+            user        = request.user
+        except Exception:
+            return Response({"code":416 ,"msg":response_code[416]})
         archives    = Note.objects.filter(user=user, trash=False, archives=True)
         serializer  = NoteSerializer(archives, many=True)
         return Response({"data":serializer.data, "code":200, "msg":response_code[200]})
@@ -359,7 +383,10 @@ class PinNoteView(GenericAPIView):
     queryset    = Note.objects.all()
 
     def get(self, request):
-        user        = request.user
+        try:
+            user        = request.user
+        except Exception:
+            return Response({"code":416 ,"msg":response_code[416]})
         archives    = Note.objects.filter(user=user, trash=False, pin=True)
         serializer  = NoteSerializer(archives, many=True)
         return Response({"data":serializer.data, "code":200, "msg":response_code[200]})
